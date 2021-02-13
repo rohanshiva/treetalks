@@ -4,6 +4,9 @@ var io = require("socket.io-client");
 
 let socket = io.connect("http://localhost:5000");
 
+socket.on("connect", () => {
+    console.log("Connected...");
+})
 const room = "25652";
 const roomCreate = {
     roomId: room,

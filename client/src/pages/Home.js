@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ListItem, ListItemLabel } from "baseui/list";
 import { useStyletron } from "baseui";
 import { Button, SHAPE, KIND } from "baseui/button";
+import "./styles.css";
 
 import { FlexGrid, FlexGridItem } from "baseui/flex-grid";
 import { Card, StyledBody, StyledAction } from "baseui/card";
@@ -19,74 +20,74 @@ const itemProps = {
 export default function Home() {
   const topics = [
     {
-      emoji: "🤰 ",
+      emoji: "🤰",
       title: "Abortion",
       description: "Babies",
       question: "What's your view on abortion",
     },
     {
-      emoji: "🌳 ",
+      emoji: "🌳",
       title: "Climate Change",
       description: "Babies",
       question: "What's your view on climate change",
     },
     {
-      emoji: "✊🏿 ",
+      emoji: "✊🏿",
       title: "Affirmative Action",
       description: "Babies",
       question: "What's your view on affirmative action",
     },
     {
-      emoji: "💵 ",
+      emoji: "💵",
       title: "Universal Basic Income",
       description: "Babies",
       question: "What's your view on universal basic income",
     },
     {
-      emoji: "🌈 ",
+      emoji: "🌈",
       title: "Gay Marriage",
       description: "Babies",
       question: "What's your view on gay marriage",
     },
     {
-      emoji: "💣 ",
+      emoji: "💣",
       title: "Millitary Spending",
       description: "Babies",
       question: "What's your view on Millitary Spending",
     },
     {
-      emoji: "🏥 ",
+      emoji: "🏥",
       title: "Universal Healthcare",
       description: "small",
       question: "What's your view on Universal Healthcare",
     },
     {
-      emoji: "📑 ",
+      emoji: "📑",
       title: "Taxes",
       description: "small",
       question: "What's your view on Taxes",
     },
     {
-      emoji: "🦠 ",
+      emoji: "🦠",
       title: "Corona Virus Vaccine",
       description: "small",
       question: "What's your view on Corona Virus Vaccine",
     },
-    { emoji: "🔫 ", title: "Gun Control", description: "small" },
+    { emoji: "🔫", title: "Gun Control", description: "small" },
     {
-      emoji: "🌎 ",
+      emoji: "🌎",
       title: "International Affairs",
       description: "small",
       question: "What's your view on Gun Control",
     },
     {
-      emoji: "🐘 ",
+      emoji: "🐘",
       title: "Poaching",
       description: "small",
       question: "What's your view on Poaching",
     },
     {
-      emoji: "🔌 ",
+      emoji: "🔌",
       title: "Capital Punishment",
       description: "small",
       question: "What's your view on abortion",
@@ -100,14 +101,14 @@ export default function Home() {
   return (
     <div>
       <FlexGrid flexGridColumnCount={3} flexGridColumnGap="scale100">
-        <FlexGridItem {...itemProps}>
+        <FlexGridItem  className="homeCols" {...itemProps}>
           <section style={{ width: "100%" }}>
             <center>
               <Card
                 overrides={{
                   Root: { style: { width: "328px", margin: "4rem" } },
                 }}
-                title="Custom Debate"
+                title="Custom Discussion"
               >
                 <StyledBody>
                   Create a private room to debate with your friends on any
@@ -134,7 +135,7 @@ export default function Home() {
             )}
           </section>
         </FlexGridItem>
-        <FlexGridItem {...itemProps}>
+        <FlexGridItem className="homeCols" {...itemProps}>
           <section style={{ width: "100%" }}>
             <h1 style={{ marginLeft: "40%" }}>🔥 Hot Topics</h1>
             <center>
@@ -169,9 +170,7 @@ export default function Home() {
                       }}
                     >
                       <ListItemLabel>
-                        <h4>
-                          {topic.emoji} {topic.title}
-                        </h4>
+                      <h4 style={{whiteSpace: "pre"}}>{topic.emoji}   {topic.title}</h4>
                       </ListItemLabel>
                     </ListItem>
                   ) : (
@@ -190,9 +189,7 @@ export default function Home() {
                       )}
                     >
                       <ListItemLabel>
-                        <h4>
-                          {topic.emoji} {topic.title}
-                        </h4>
+                      <h4 style={{whiteSpace: "pre"}}>{topic.emoji}   {topic.title}</h4>
                       </ListItemLabel>
                     </ListItem>
                   )
@@ -208,7 +205,7 @@ export default function Home() {
             )}
           </section>
         </FlexGridItem>
-        <FlexGridItem {...itemProps}>
+        <FlexGridItem  className="homeCols" {...itemProps}>
           <FlexGrid
             flexGridColumnCount={1}
             flexGridColumnGap="scale800"
