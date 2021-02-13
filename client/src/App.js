@@ -14,8 +14,6 @@ import "firebase/auth";
 
 import { useAuthState } from "react-firebase-hooks/auth";
 
-
-
 var firebaseConfig = {
   apiKey: "AIzaSyAKGg3SA1dseQKEL-xRreH-b1PE5SBb9rA",
   authDomain: "treetalks-eec9f.firebaseapp.com",
