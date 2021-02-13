@@ -87,7 +87,7 @@ export default function Navbar() {
       <HeaderNavigation>
         <StyledNavigationList $align={ALIGN.left}>
           <StyledNavigationItem>
-            <Button shape = {SHAPE.pill} > Tree Talks</Button>
+            <h2> Tree Talks</h2>
           </StyledNavigationItem>
         </StyledNavigationList>
         <StyledNavigationList $align={ALIGN.center} />
@@ -98,7 +98,6 @@ export default function Navbar() {
             </Button>): (   <Button onClick={() => login()} style = {{borderRadius: "25px"}}>
             Login
             </Button>)}
-         
           </StyledNavigationItem>
         </StyledNavigationList>
         <StyledNavigationList $align={ALIGN.right} />

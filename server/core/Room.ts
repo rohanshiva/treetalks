@@ -71,11 +71,10 @@ class Room{
           if(speaker.socketId === socketId){
               leavingSpeaker.push(speaker);
           }
-          return speaker.socketId !== socketId
+          return speaker.socketId !== socketId;
         });
 
         if(leavingSpeaker.length > 0){
-
             //in case owner leaves, make other member the owner
             if(leavingSpeaker[0].id === this.ownerId && this.speakers.length > 0){
                 this.ownerId = this.speakers[0].id;
@@ -100,4 +99,5 @@ class Room{
     }
 }
 
-export {Room, RoomUser};
+const roomPool = new Set<string>();
+export {Room, RoomUser, roomPool};
