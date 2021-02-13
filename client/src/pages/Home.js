@@ -43,7 +43,7 @@ export default function Home() {
                 overrides={{
                   Root: { style: { width: "328px", margin: "4rem" } },
                 }}
-                title="Private Match"
+                title="Private Debate"
               >
                 <StyledBody>
                   Create a private room to debate with your friends on any
@@ -51,7 +51,7 @@ export default function Home() {
                 </StyledBody>
                 <StyledAction>
                   <Button
-                    overrides={{ BaseButton: { style: { width: "100%" } } }}
+                    overrides={{ BaseButton: { style: { width: "100%", borderRadius: "25px" } } }}
                   >
                     Create Room
                   </Button>
@@ -63,7 +63,7 @@ export default function Home() {
         <FlexGridItem {...itemProps}>
           <section style={{ width: "100%" }}>
             <center>
-              <h1> Debate Topics with random mfs</h1>
+              <h1>Hot Topics</h1>
               <ul
                 className={css({
                   width: "512px",
@@ -98,7 +98,12 @@ export default function Home() {
             <FlexGridItem {...itemProps}>
               <h2>News</h2>
             </FlexGridItem>
-
+            <div style = {{
+                paddingLeft: "10%",
+                height: "100vh",
+                overflowY: "scroll",
+                display: "flex",
+                flexDirection: "column"}}>
             {news.map((topic) => (
               <FlexGridItem {...itemProps}>
                 <Card
@@ -116,6 +121,7 @@ export default function Home() {
                 </Card>
               </FlexGridItem>
             ))}
+            </div>
           </FlexGrid>
         </FlexGridItem>
       </FlexGrid>

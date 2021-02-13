@@ -87,13 +87,13 @@ export default function Navbar() {
       <HeaderNavigation>
         <StyledNavigationList $align={ALIGN.left}>
           <StyledNavigationItem>
-            <Button> Tree Talks</Button>
+            <Button style={{borderRadius: "25px"}}> Tree Talks</Button>
           </StyledNavigationItem>
         </StyledNavigationList>
         <StyledNavigationList $align={ALIGN.center} />
         <StyledNavigationList $align={ALIGN.right}>
           <StyledNavigationItem>
-            <Button onClick={() => handleAuth()}>
+            <Button onClick={() => handleAuth()} style = {{borderRadius: "25px"}}>
               {user ? "Log Out" : "Login"}
             </Button>
           </StyledNavigationItem>
