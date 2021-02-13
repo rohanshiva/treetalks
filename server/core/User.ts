@@ -2,7 +2,9 @@ import {users} from "./DB";
 
 
 type User = {
-    id:string 
+    id:string,
+    email: string,
+    username: string
 }
 
 export class UserService{
