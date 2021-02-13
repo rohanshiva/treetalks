@@ -8,7 +8,10 @@ const room = "25652";
 const roomCreate = {
     roomId: room,
     userId: "Ramko9999",
-    topicDetails: "World Eaters are bad for heatlh",
+    topicDetails: {
+        title: "World Eater",
+        description: "They are nice",
+    },
     degree: 1
 };
 

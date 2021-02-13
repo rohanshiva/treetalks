@@ -1,7 +1,7 @@
 import { Callback } from "redis";
 import { Socket, Server } from "socket.io";
 import { redisClient } from "./HttpServer";
-import { Room, roomPool } from "./Room";
+import { Room, roomPool, TopicDetails } from "./Room";
 import { randomBytes } from "crypto";
 import moment from "moment";
 
@@ -45,7 +45,7 @@ type CreateRoom = {
     roomId: string,
     userId: string,
     degree: number
-    topicDetails: string
+    topicDetails: TopicDetails
 }
 
 const onCreate = (socket: Socket, io: Server) => {

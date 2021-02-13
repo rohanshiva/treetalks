@@ -9,15 +9,20 @@ type RoomUser = {
     id:string
 }
 
+export type TopicDetails = {
+    title: string,
+    description: string
+}
+
 class Room{
 
     id:string
     speakers:RoomUser[]
     ownerId:string
-    topicDetails:string
+    topicDetails:TopicDetails
     chatHistory:Message[]
 
-    constructor(id:string, speakers:RoomUser[], ownerId:string, topicDetails:string, chatHistory:Message[]){
+    constructor(id:string, speakers:RoomUser[], ownerId:string, topicDetails:TopicDetails, chatHistory:Message[]){
         this.id = id;
         this.speakers = speakers;
         this.ownerId = ownerId;
@@ -47,7 +52,7 @@ class Room{
         this.speakers.push(player);
     }
 
-    setTopicDetails(topicDetails:string){
+    setTopicDetails(topicDetails:TopicDetails){
         this.topicDetails = topicDetails;
     }
 
@@ -90,12 +95,15 @@ class Room{
         return JSON.stringify(this);
     }
 
-    static from({id, speakers, ownerId, topicDetails, chatHistory}: {id:string, speakers:RoomUser[], ownerId:string, topicDetails:string, chatHistory:Message[]}){
+    static from({id, speakers, ownerId, topicDetails, chatHistory}: {id:string, speakers:RoomUser[], ownerId:string, topicDetails:TopicDetails, chatHistory:Message[]}){
         return new Room(id, speakers, ownerId, topicDetails, chatHistory);
     }
 
     static new(id:string){
-        return new Room(id, [], "", "", []);
+        return new Room(id, [], "", {
+            title: "",
+            description: ""
+        }, []);
     }
 }
 
