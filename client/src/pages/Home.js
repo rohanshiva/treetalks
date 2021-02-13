@@ -7,6 +7,7 @@ import { FlexGrid, FlexGridItem } from "baseui/flex-grid";
 import { Card, StyledBody, StyledAction } from "baseui/card";
 import news from "../data/news.json";
 import JoinModal from "../components/JoinModal";
+import CreateModal from "../components/CreateModal";
 
 const itemProps = {
   height: "100%",
@@ -18,69 +19,82 @@ const itemProps = {
 export default function Home() {
   const topics = [
     {
-      title: "🤰 Abortion",
+      emoji: "🤰 ",
+      title: "Abortion",
       description: "Babies",
       question: "What's your view on abortion",
     },
     {
-      title: "🌳 Climate Change",
+      emoji: "🌳 ",
+      title: "Climate Change",
       description: "Babies",
       question: "What's your view on climate change",
     },
     {
-      title: "✊🏿 Affirmative Action",
+      emoji: "✊🏿 ",
+      title: "Affirmative Action",
       description: "Babies",
       question: "What's your view on affirmative action",
     },
     {
-      title: "💵 Universal Basic Income",
+      emoji: "💵 ",
+      title: "Universal Basic Income",
       description: "Babies",
       question: "What's your view on universal basic income",
     },
     {
-      title: "🌈 Gay Marriage",
+      emoji: "🌈 ",
+      title: "Gay Marriage",
       description: "Babies",
       question: "What's your view on gay marriage",
     },
     {
-      title: "💣 Millitary Spending",
+      emoji: "💣 ",
+      title: "Millitary Spending",
       description: "Babies",
       question: "What's your view on Millitary Spending",
     },
     {
-      title: "🏥 Universal Healthcare",
+      emoji: "🏥 ",
+      title: "Universal Healthcare",
       description: "small",
       question: "What's your view on Universal Healthcare",
     },
     {
-      title: "📑 Taxes",
+      emoji: "📑 ",
+      title: "Taxes",
       description: "small",
       question: "What's your view on Taxes",
     },
     {
-      title: "🦠 Corona Virus Vaccine",
+      emoji: "🦠 ",
+      title: "Corona Virus Vaccine",
       description: "small",
       question: "What's your view on Corona Virus Vaccine",
     },
-    { title: "🔫 Gun Control", description: "small" },
+    { emoji: "🔫 ", title: "Gun Control", description: "small" },
     {
-      title: "🌎 International Affairs",
+      emoji: "🌎 ",
+      title: "International Affairs",
       description: "small",
       question: "What's your view on Gun Control",
     },
     {
-      title: "🐘 Poaching",
+      emoji: "🐘 ",
+      title: "Poaching",
       description: "small",
       question: "What's your view on Poaching",
     },
     {
-      title: "🔌 Capital Punishment",
+      emoji: "🔌 ",
+      title: "Capital Punishment",
       description: "small",
       question: "What's your view on abortion",
     },
   ];
 
   const [showModal, setShowModal] = useState(false);
+  const [showCreateModal, setCreateModal] = useState(false);
   const [selectTopic, setSelectTopic] = useState(0);
   const [css] = useStyletron();
   return (
@@ -93,7 +107,7 @@ export default function Home() {
                 overrides={{
                   Root: { style: { width: "328px", margin: "4rem" } },
                 }}
-                title="Private Debate"
+                title="Custom Debate"
               >
                 <StyledBody>
                   Create a private room to debate with your friends on any
@@ -101,6 +115,9 @@ export default function Home() {
                 </StyledBody>
                 <StyledAction>
                   <Button
+                    onClick={() => {
+                      setCreateModal(true);
+                    }}
                     shape={SHAPE.pill}
                     overrides={{ BaseButton: { style: { width: "100%" } } }}
                   >
@@ -109,11 +126,17 @@ export default function Home() {
                 </StyledAction>
               </Card>
             </center>
+            {showCreateModal && (
+              <CreateModal
+                isOpen={showCreateModal}
+                onClose={() => setCreateModal(false)}
+              />
+            )}
           </section>
         </FlexGridItem>
         <FlexGridItem {...itemProps}>
           <section style={{ width: "100%" }}>
-            <h1 style={{ marginLeft: "2.5em" }}>🔥 Hot Topics</h1>
+            <h1 style={{ marginLeft: "40%" }}>🔥 Hot Topics</h1>
             <center>
               <ul
                 className={css({
@@ -146,7 +169,9 @@ export default function Home() {
                       }}
                     >
                       <ListItemLabel>
-                        <h4>{topic.title}</h4>
+                        <h4>
+                          {topic.emoji} {topic.title}
+                        </h4>
                       </ListItemLabel>
                     </ListItem>
                   ) : (
@@ -165,7 +190,9 @@ export default function Home() {
                       )}
                     >
                       <ListItemLabel>
-                        <h4>{topic.title}</h4>
+                        <h4>
+                          {topic.emoji} {topic.title}
+                        </h4>
                       </ListItemLabel>
                     </ListItem>
                   )
