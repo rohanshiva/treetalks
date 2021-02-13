@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   HeaderNavigation,
   ALIGN,
@@ -5,17 +6,20 @@ import {
   StyledNavigationItem,
 } from "baseui/header-navigation";
 import { Modal, ModalHeader, ModalBody, SIZE, ROLE } from "baseui/modal";
-import { Button, SHAPE } from "baseui/button";
-import { Notification, KIND } from "baseui/notification";
+import { Button, SHAPE, KIND } from "baseui/button";
+import { Notification } from "baseui/notification";
+
+import ChevronDown from "baseui/icon/chevron-down";
+import { StatefulPopover, PLACEMENT } from "baseui/popover";
+import { StatefulMenu } from "baseui/menu";
+
 import LoginForm from "./LoginForm";
-
-import React, { useState } from "react";
-
 import firebase from "firebase/app";
 import "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import {createUser} from "../apis/User";
 import {getUser} from "../apis/User";
+import "./styles.css";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,7 +35,7 @@ export default function Navbar() {
     }
   };
 
-  const login = async() => {
+  const login = async () => {
     var provider = new firebase.auth.GoogleAuthProvider();
     firebase
       .auth()
@@ -42,22 +46,19 @@ export default function Navbar() {
           firebase.auth().currentUser.metadata.creationTime ===
           firebase.auth().currentUser.metadata.lastSignInTime
         ) {
-
           console.log("new user");
 
           var newUser = {
             email: firebase.auth().currentUser.email,
             username: firebase.auth().currentUser.displayName,
-            id: firebase.auth().currentUser.uid
-          }
-          
+            id: firebase.auth().currentUser.uid,
+          };
+
           createUser(newUser);
-        
         } else {
           console.log("not a new user");
           // login
         }
-
       })
       .catch((error) => {
         // Handle Errors here.
@@ -82,41 +83,62 @@ export default function Navbar() {
       });
   };
 
+  const mailto = () => {
+    window.open(
+      "mailto:" + "nadim011@umn.edu" + "?cc=" + "charleshaoshi@gmail.com",
+      "_self"
+    );
+  };
+
+  const github = () => {
+    window.open("https://github.com/rohanshiva/treetalks");
+  };
+
+  const ITEMS = [
+    { label: "Log Out", function: logout },
+    { label: "Contact", function: mailto },
+    { label: "Github", function: github },
+  ];
+
   return (
     <div>
-      <HeaderNavigation>
+      <HeaderNavigation className="navbarAll">
         <StyledNavigationList $align={ALIGN.left}>
           <StyledNavigationItem>
-            <h2> Tree Talks</h2>
+            <Button kind={KIND.minimal}>Tree Talks</Button>
           </StyledNavigationItem>
         </StyledNavigationList>
         <StyledNavigationList $align={ALIGN.center} />
         <StyledNavigationList $align={ALIGN.right}>
           <StyledNavigationItem>
-            {user ? (   <Button onClick={() => logout()} style = {{borderRadius: "25px"}}>
-            {user.displayName}
-            </Button>): (   <Button onClick={() => login()} style = {{borderRadius: "25px"}}>
-            Login
-            </Button>)}
+            {user ? (
+              // <Button onClick={() => logout()} style={{ borderRadius: "25px" }}>
+              //   {user.displayName}
+              // </Button>
+              <StatefulPopover
+                focusLock
+                placement={PLACEMENT.bottomLeft}
+                content={({ close }) => (
+                  <StatefulMenu
+                    items={ITEMS}
+                    onItemSelect={({ item }) => item.function()}
+                    overrides={{
+                      List: { style: { width: "120px" } },
+                    }}
+                  />
+                )}
+              >
+                <Button endEnhancer={() => <ChevronDown />}>Settings</Button>
+              </StatefulPopover>
+            ) : (
+              <Button onClick={() => login()} style={{ borderRadius: "25px" }}>
+                Login
+              </Button>
+            )}
           </StyledNavigationItem>
         </StyledNavigationList>
         <StyledNavigationList $align={ALIGN.right} />
       </HeaderNavigation>
-
-      <Modal
-        onClose={() => setIsOpen(false)}
-        closeable
-        isOpen={isOpen}
-        animate
-        autoFocus
-        size={SIZE.default}
-        role={ROLE.dialog}
-      >
-        <ModalHeader>Welcome back</ModalHeader>
-        <ModalBody>
-          <LoginForm></LoginForm>
-        </ModalBody>
-      </Modal>
     </div>
   );
 }
