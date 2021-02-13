@@ -43,12 +43,6 @@ export default function Home() {
       question: "What's your view on universal basic income",
     },
     {
-      emoji: "🌈 ",
-      title: "Gay Marriage",
-      description: "Babies",
-      question: "What's your view on gay marriage",
-    },
-    {
       emoji: "💣 ",
       title: "Millitary Spending",
       description: "Babies",
