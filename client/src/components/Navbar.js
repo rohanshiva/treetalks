@@ -94,7 +94,7 @@ export default function Navbar() {
         <StyledNavigationList $align={ALIGN.right}>
           <StyledNavigationItem>
             {user ? (   <Button onClick={() => handleAuth()} style = {{borderRadius: "25px"}}>
-            {user.username}
+            {user.displayName}
             </Button>): (   <Button onClick={() => handleAuth()} style = {{borderRadius: "25px"}}>
             Login
             </Button>)}

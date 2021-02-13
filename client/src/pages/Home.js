@@ -2,18 +2,11 @@ import React, { useState } from "react";
 import { ListItem, ListItemLabel } from "baseui/list";
 import { useStyletron } from "baseui";
 import { Button, SHAPE, KIND } from "baseui/button";
-import {
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalButton,
-  SIZE,
-  ROLE,
-} from "baseui/modal";
+
 import { FlexGrid, FlexGridItem } from "baseui/flex-grid";
 import { Card, StyledBody, StyledAction } from "baseui/card";
 import news from "../data/news.json";
+import JoinModal from "../components/JoinModal";
 
 const itemProps = {
   height: "100%",
@@ -24,21 +17,71 @@ const itemProps = {
 
 export default function Home() {
   const topics = [
-    { title: "🤰 Abortion", description: "Babies" },
-    { title: "🌳 Climate Change", description: "Babies" },
-    { title: "✊🏿 Affirmative Action", description: "Babies" },
-    { title: "💵 Universal Basic Income", description: "Babies" },
-    { title: "🌈 Gay Marriage", description: "Babies" },
-    { title: "💣 Millitary Spending", description: "Babies" },
-    { title: "🏥 Universal Healthcare", description: "small" },
-    { title: "📑 Taxes", description: "small" },
-    { title: "🦠 Corona Virus Vaccine", description: "small" },
+    {
+      title: "🤰 Abortion",
+      description: "Babies",
+      question: "What's your view on abortion",
+    },
+    {
+      title: "🌳 Climate Change",
+      description: "Babies",
+      question: "What's your view on climate change",
+    },
+    {
+      title: "✊🏿 Affirmative Action",
+      description: "Babies",
+      question: "What's your view on affirmative action",
+    },
+    {
+      title: "💵 Universal Basic Income",
+      description: "Babies",
+      question: "What's your view on universal basic income",
+    },
+    {
+      title: "🌈 Gay Marriage",
+      description: "Babies",
+      question: "What's your view on gay marriage",
+    },
+    {
+      title: "💣 Millitary Spending",
+      description: "Babies",
+      question: "What's your view on Millitary Spending",
+    },
+    {
+      title: "🏥 Universal Healthcare",
+      description: "small",
+      question: "What's your view on Universal Healthcare",
+    },
+    {
+      title: "📑 Taxes",
+      description: "small",
+      question: "What's your view on Taxes",
+    },
+    {
+      title: "🦠 Corona Virus Vaccine",
+      description: "small",
+      question: "What's your view on Corona Virus Vaccine",
+    },
     { title: "🔫 Gun Control", description: "small" },
-    { title: "🌎 International Affairs", description: "small" },
-    { title: "🐘 Poaching", description: "small" },
-    { title: "🔌 Capital Punishment", description: "small" },
+    {
+      title: "🌎 International Affairs",
+      description: "small",
+      question: "What's your view on Gun Control",
+    },
+    {
+      title: "🐘 Poaching",
+      description: "small",
+      question: "What's your view on Poaching",
+    },
+    {
+      title: "🔌 Capital Punishment",
+      description: "small",
+      question: "What's your view on abortion",
+    },
   ];
-  const [isOpen, setIsOpen] = useState(false);
+
+  const [showModal, setShowModal] = useState(false);
+  const [selectTopic, setSelectTopic] = useState(0);
   const [css] = useStyletron();
   return (
     <div>
@@ -84,7 +127,10 @@ export default function Home() {
                     <ListItem
                       endEnhancer={() => (
                         <Button
-                          onClick={() => setIsOpen(true)}
+                          onClick={() => {
+                            setShowModal(true);
+                            setSelectTopic(idx);
+                          }}
                           size="compact"
                           kind="minimal"
                         >
@@ -107,7 +153,10 @@ export default function Home() {
                     <ListItem
                       endEnhancer={() => (
                         <Button
-                          onClick={() => setIsOpen(true)}
+                          onClick={() => {
+                            setShowModal(true);
+                            setSelectTopic(idx);
+                          }}
                           size="compact"
                           kind="minimal"
                         >
@@ -123,32 +172,13 @@ export default function Home() {
                 )}
               </ul>
             </center>
-
-            <Modal
-              onClose={() => setIsOpen(false)}
-              closeable
-              isOpen={isOpen}
-              animate
-              autoFocus
-              size={SIZE.default}
-              role={ROLE.dialog}
-            >
-              <ModalHeader>Hello world</ModalHeader>
-              <ModalBody>
-                Proin ut dui sed metus pharetra hend rerit vel non mi. Nulla
-                ornare faucibus ex, non facilisis nisl. Maecenas aliquet mauris
-                ut tempus.
-              </ModalBody>
-              <ModalFooter>
-                <ModalButton
-                  onClick={() => setIsOpen(false)}
-                  kind={KIND.minimal}
-                >
-                  Cancel
-                </ModalButton>
-                <ModalButton kind={KIND.minimal}>Join</ModalButton>
-              </ModalFooter>
-            </Modal>
+            {showModal && (
+              <JoinModal
+                topic={topics[selectTopic]}
+                isOpen={showModal}
+                onClose={() => setShowModal(false)}
+              />
+            )}
           </section>
         </FlexGridItem>
         <FlexGridItem {...itemProps}>
