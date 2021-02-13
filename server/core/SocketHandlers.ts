@@ -41,53 +41,52 @@ const onDisconnecting = (socket: Socket, io: Server) => {
     }
 }
 
-type CreateRoom = {
+type JoinRoom = {
     roomId: string,
     userId: string,
     degree: number
     topicDetails: TopicDetails
 }
 
-const onCreate = (socket: Socket, io: Server) => {
-    return ({ roomId, userId, degree, topicDetails }: CreateRoom) => {
-        let room = Room.new(roomId);
-        room.setOwner({
-            socketId: socket.id,
-            id: userId,
-            degree: degree,
-            anonUsername: userId
-        });
-        room.setTopicDetails(topicDetails);
-        roomPool.add(roomId);
-        redisClient.set(roomId, room.serialize(), onRedisSet as Callback<string>);
-        socket.join(roomId);
-        io.to(roomId).emit("room", room.serialize());
-    }
-}
-
-type JoinRoom = {
-    roomId: string,
-    userId: string,
-    degree: number
-}
-
 const onJoin = (socket: Socket, io: Server) => {
-    return ({ roomId, userId, degree }: JoinRoom) => {
-        redisClient.get(roomId, (err, result) => {
-            if (err != null || result == null) {
-                return;
+    return ({ roomId, userId, degree, topicDetails }: JoinRoom) => {
+
+        if (roomPool.has(roomId)) { //make the user join the room
+            const isGameCreated = roomPool.get(roomId);
+            if (isGameCreated) {
+                redisClient.get(roomId, (err, result) => {
+                    if (err != null || result == null) {
+                        return;
+                    }
+                    let room = Room.from(JSON.parse(result));
+                    room.onSpeakerJoin({
+                        socketId: socket.id,
+                        id: userId,
+                        degree: degree,
+                        anonUsername: userId
+                    });
+                    redisClient.set(roomId, room.serialize(), onRedisSet as Callback<string>);
+                    socket.join(roomId);
+                    io.to(roomId).emit("room", room.serialize());
+                });
             }
-            let room = Room.from(JSON.parse(result));
-            room.onSpeakerJoin({
-                socketId: socket.id,
-                id: userId,
-                degree: degree,
-                anonUsername: userId
-            });
-            redisClient.set(roomId, room.serialize(), onRedisSet as Callback<string>);
-            socket.join(roomId);
-            io.to(roomId).emit("room", room.serialize());
-        });
+            else {
+                let room = Room.new(roomId);
+                room.setOwner({
+                    socketId: socket.id,
+                    id: userId,
+                    degree: degree,
+                    anonUsername: userId
+                });
+                room.setTopicDetails(topicDetails);
+
+                roomPool.set(roomId, true);
+                redisClient.set(roomId, room.serialize(), onRedisSet as Callback<string>);
+                
+                socket.join(roomId);
+                io.to(roomId).emit("room", room.serialize());
+            }
+        }
     }
 }
 
@@ -121,7 +120,7 @@ const onMessage = (socket: Socket, io: Server) => {
 }
 
 
-export {onDisconnecting, onCreate, onJoin, onMessage};
+export { onDisconnecting, onJoin, onMessage };
 
 
 

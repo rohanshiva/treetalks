@@ -1,7 +1,7 @@
 
 var io = require("socket.io-client");
 socket2 = io.connect("http://localhost:5000");
-const room = "25652";
+const room = "a17e3d9690fccd0d1c58a76a";
 
 socket2.emit("join", {
         roomId: room,
