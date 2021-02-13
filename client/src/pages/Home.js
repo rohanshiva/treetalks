@@ -1,14 +1,21 @@
-import React from "react";
-import { ListItem, ListItemLabel, ARTWORK_SIZES } from "baseui/list";
+import React, { useState } from "react";
+import { ListItem, ListItemLabel } from "baseui/list";
 import { useStyletron } from "baseui";
-import { Button } from "baseui/button";
-
-
+import { Button, SHAPE, KIND } from "baseui/button";
+import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalButton,
+  SIZE,
+  ROLE,
+} from "baseui/modal";
 import { FlexGrid, FlexGridItem } from "baseui/flex-grid";
-import { Card, StyledBody, StyledAction, StyledThumbnail } from "baseui/card";
+import { Card, StyledBody, StyledAction } from "baseui/card";
 import news from "../data/news.json";
+
 const itemProps = {
-  backgroundColor: "mono150",
   height: "100%",
   display: "flex",
   alignItems: "center",
@@ -17,22 +24,21 @@ const itemProps = {
 
 export default function Home() {
   const topics = [
-    { title: "Abortion", description: "Babies" },
-    { title: "Climate Change", description: "Babies" },
-    { title: "Affirmative Action", description: "Babies" },
-    { title: "Universal Basic Income", description: "Babies" },
-    { title: "Gay Marriage", description: "Babies" },
-    { title: "Millitary Spending", description: "Babies" },
-    { title: "Universal Healthcare", description: "small" },
-    { title: "Taxes", description: "small" },
-    { title: "Corona Virus Vaccine", description: "small" },
-    { title: "Gun Control", description: "small" },
-    { title: "International Affairs", description: "small" },
-    { title: "Poaching", description: "small" },
-    { title: "Capital Punishment", description: "small" },
-    { title: "Universal Healthcare", description: "small" },
+    { title: "🤰 Abortion", description: "Babies" },
+    { title: "🌳 Climate Change", description: "Babies" },
+    { title: "✊🏿 Affirmative Action", description: "Babies" },
+    { title: "💵 Universal Basic Income", description: "Babies" },
+    { title: "🌈 Gay Marriage", description: "Babies" },
+    { title: "💣 Millitary Spending", description: "Babies" },
+    { title: "🏥 Universal Healthcare", description: "small" },
+    { title: "📑 Taxes", description: "small" },
+    { title: "🦠 Corona Virus Vaccine", description: "small" },
+    { title: "🔫 Gun Control", description: "small" },
+    { title: "🌎 International Affairs", description: "small" },
+    { title: "🐘 Poaching", description: "small" },
+    { title: "🔌 Capital Punishment", description: "small" },
   ];
-
+  const [isOpen, setIsOpen] = useState(false);
   const [css] = useStyletron();
   return (
     <div>
@@ -52,7 +58,8 @@ export default function Home() {
                 </StyledBody>
                 <StyledAction>
                   <Button
-                    overrides={{ BaseButton: { style: { width: "100%", borderRadius: "25px" } } }}
+                    shape={SHAPE.pill}
+                    overrides={{ BaseButton: { style: { width: "100%" } } }}
                   >
                     Create Room
                   </Button>
@@ -63,8 +70,8 @@ export default function Home() {
         </FlexGridItem>
         <FlexGridItem {...itemProps}>
           <section style={{ width: "100%" }}>
+            <h1 style={{ marginLeft: "2.5em" }}>🔥 Hot Topics</h1>
             <center>
-              <h1>Hot Topics</h1>
               <ul
                 className={css({
                   width: "512px",
@@ -72,62 +79,115 @@ export default function Home() {
                   paddingRight: 0,
                 })}
               >
-                {topics.map((topic) => (
-                  <ListItem
-                    artworkSize={ARTWORK_SIZES.LARGE}
-                    endEnhancer={() => (
-                      <Button  size="compact" kind="secondary" shape="pill">
-                        Join
-                      </Button>
-                    )}
-                  >
-                    <ListItemLabel>
-                      <h4>{topic.title}</h4>
-                    </ListItemLabel>
-                  </ListItem>
-                ))}
+                {topics.map((topic, idx) =>
+                  idx % 2 === 0 ? (
+                    <ListItem
+                      endEnhancer={() => (
+                        <Button
+                          onClick={() => setIsOpen(true)}
+                          size="compact"
+                          kind="minimal"
+                        >
+                          Join
+                        </Button>
+                      )}
+                      overrides={{
+                        Root: {
+                          style: ({ $theme }) => ({
+                            backgroundColor: $theme.colors.mono300,
+                          }),
+                        },
+                      }}
+                    >
+                      <ListItemLabel>
+                        <h4>{topic.title}</h4>
+                      </ListItemLabel>
+                    </ListItem>
+                  ) : (
+                    <ListItem
+                      endEnhancer={() => (
+                        <Button
+                          onClick={() => setIsOpen(true)}
+                          size="compact"
+                          kind="minimal"
+                        >
+                          Join
+                        </Button>
+                      )}
+                    >
+                      <ListItemLabel>
+                        <h4>{topic.title}</h4>
+                      </ListItemLabel>
+                    </ListItem>
+                  )
+                )}
               </ul>
             </center>
+
+            <Modal
+              onClose={() => setIsOpen(false)}
+              closeable
+              isOpen={isOpen}
+              animate
+              autoFocus
+              size={SIZE.default}
+              role={ROLE.dialog}
+            >
+              <ModalHeader>Hello world</ModalHeader>
+              <ModalBody>
+                Proin ut dui sed metus pharetra hend rerit vel non mi. Nulla
+                ornare faucibus ex, non facilisis nisl. Maecenas aliquet mauris
+                ut tempus.
+              </ModalBody>
+              <ModalFooter>
+                <ModalButton
+                  onClick={() => setIsOpen(false)}
+                  kind={KIND.minimal}
+                >
+                  Cancel
+                </ModalButton>
+                <ModalButton kind={KIND.minimal}>Join</ModalButton>
+              </ModalFooter>
+            </Modal>
           </section>
         </FlexGridItem>
         <FlexGridItem {...itemProps}>
           <FlexGrid
             flexGridColumnCount={1}
             flexGridColumnGap="scale800"
-            flexGridRowGap="scale800"
+            flexGridRowGap="scale400"
           >
             <FlexGridItem {...itemProps}>
-              <h2>News</h2>
+              <h2>News 📰</h2>
             </FlexGridItem>
-            <div style = {{
+            <div
+              style={{
                 paddingLeft: "10%",
                 height: "100vh",
                 overflowY: "scroll",
                 display: "flex",
-                flexDirection: "column"}}>
-            {news.map((topic) => (
-              <FlexGridItem {...itemProps}>
-                <div onClick={() => (
-                     window.open(topic.url)
-                    )} >
-                <Card
-                  
-                  overrides={{
-                    Root: { style: { width: "324px", border: "none" } },
-                    HeaderImage: {
-                      style: ({ $theme }) => ({
-                        borderRadius: "25px",
-                      }),
-                    },
-                  }}
-                  headerImage={topic.image}
-                >
-                  <h4>{topic.description}</h4>
-                </Card>
-                </div>
-               
-              </FlexGridItem>
-            ))}
+                flexDirection: "column",
+              }}
+            >
+              {news.map((topic) => (
+                <FlexGridItem {...itemProps}>
+                  <div onClick={() => window.open(topic.url)}>
+                    <Card
+                      overrides={{
+                        Root: { style: { width: "324px", border: "none" } },
+                        HeaderImage: {
+                          style: ({ $theme }) => ({
+                            borderRadius: "25px",
+                          }),
+                        },
+                      }}
+                      headerImage={topic.image}
+                    >
+                      <h4>{topic.description}</h4>
+                    </Card>
+                  </div>
+                </FlexGridItem>
+              ))}
             </div>
           </FlexGrid>
         </FlexGridItem>
