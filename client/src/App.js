@@ -14,8 +14,8 @@ import { LightTheme } from "baseui";
 
 import firebase from "firebase/app";
 import "firebase/auth";
-
 import { useAuthState } from "react-firebase-hooks/auth";
+import CreateModal from "./components/CreateModal";
 
 var firebaseConfig = {
   apiKey: "AIzaSyAKGg3SA1dseQKEL-xRreH-b1PE5SBb9rA",
@@ -26,6 +26,7 @@ var firebaseConfig = {
   appId: "1:901045033848:web:ab0d49b56f8b50fe59868d",
   measurementId: "G-P81VNEX9CC",
 };
+
 
 firebase.initializeApp(firebaseConfig);
 
@@ -39,7 +40,7 @@ function App() {
       <BaseProvider theme={LightTheme}>
         <Navbar />
         {user ? (
-          <Router>
+          <Router >
             <Switch>
                <SocketIOProvider
                 url="http://localhost:5000"

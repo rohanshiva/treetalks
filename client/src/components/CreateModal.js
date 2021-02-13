@@ -14,8 +14,11 @@ import { FormControl } from "baseui/form-control";
 import { Input } from "baseui/input";
 import { useSocket } from "use-socketio";
 import {createRoom} from '../apis/Room';
+import { useHistory } from "react-router-dom";
+
 
 export default function CreateModal({ isOpen, onClose }) {
+ const history = useHistory();
  const [join, setJoin] = useState(false);
  const [topic, setTopic] = useState({topicName: "What's the topic", topicDetails: "Topic details"});
  const onTopicChange = ({ target: { value } }) => {
@@ -26,8 +29,9 @@ export default function CreateModal({ isOpen, onClose }) {
   };
 
   const handleJoin = async () => {
-    const room = await createRoom();
-    window.open(`/${room}`);
+    const room = await createRoom(); 
+
+    history.push(`/${room}`, { topic: topic})
   };
   return (
     <Modal
