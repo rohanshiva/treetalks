@@ -8,14 +8,34 @@ import { Provider as StyletronProvider } from "styletron-react";
 import { Client as Styletron } from "styletron-engine-atomic";
 import { LightTheme } from "baseui";
 
-const engine = new Styletron();
+import firebase from "firebase/app";
+import "firebase/auth";
 
+import { useAuthState } from "react-firebase-hooks/auth";
+
+var firebaseConfig = {
+  apiKey: "AIzaSyAKGg3SA1dseQKEL-xRreH-b1PE5SBb9rA",
+  authDomain: "treetalks-eec9f.firebaseapp.com",
+  projectId: "treetalks-eec9f",
+  storageBucket: "treetalks-eec9f.appspot.com",
+  messagingSenderId: "901045033848",
+  appId: "1:901045033848:web:ab0d49b56f8b50fe59868d",
+  measurementId: "G-P81VNEX9CC",
+};
+
+firebase.initializeApp(firebaseConfig);
+
+
+
+const engine = new Styletron();
 function App() {
+  const [user] = useAuthState(firebase.auth());
+
   return (
     <StyletronProvider value={engine}>
       <BaseProvider theme={LightTheme}>
         <Navbar />
-        <LandingPage />
+        {user ? <h1>Logged In!</h1> : <LandingPage />}
       </BaseProvider>
     </StyletronProvider>
   );
