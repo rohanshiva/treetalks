@@ -1,4 +1,5 @@
 import express = require("express");
+import { UserService } from "../core/User";
 
 const userRouter = express.Router();
 
@@ -9,9 +10,10 @@ userRouter.post("/", (req, res) => {
 });
 
 
-userRouter.get("/:id", (req, res) => {
+userRouter.get("/:id", async (req, res) => {
     const id: string = req.params.id;
-    res.send({id: id});
+    const userData = await UserService.getUser(id);
+    res.send(userData);
 });
 
 export default userRouter;
