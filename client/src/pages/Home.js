@@ -2,13 +2,24 @@ import React, { useState } from "react";
 import { ListItem, ListItemLabel } from "baseui/list";
 import { useStyletron } from "baseui";
 import { Button, SHAPE, KIND } from "baseui/button";
+<<<<<<< HEAD
 import "./styles.css";
 
+=======
+import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalButton,
+  SIZE,
+  ROLE,
+} from "baseui/modal";
+>>>>>>> f15bc7a5ed001dedef44b4ce653cbdfe7722c0d5
 import { FlexGrid, FlexGridItem } from "baseui/flex-grid";
 import { Card, StyledBody, StyledAction } from "baseui/card";
 import news from "../data/news.json";
-import JoinModal from "../components/JoinModal";
-import CreateModal from "../components/CreateModal";
+import "./styles.css";
 
 const itemProps = {
   height: "100%",
@@ -93,10 +104,7 @@ export default function Home() {
       question: "What's your view on abortion",
     },
   ];
-
-  const [showModal, setShowModal] = useState(false);
-  const [showCreateModal, setCreateModal] = useState(false);
-  const [selectTopic, setSelectTopic] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
   const [css] = useStyletron();
   return (
     <div>
@@ -116,9 +124,6 @@ export default function Home() {
                 </StyledBody>
                 <StyledAction>
                   <Button
-                    onClick={() => {
-                      setCreateModal(true);
-                    }}
                     shape={SHAPE.pill}
                     overrides={{ BaseButton: { style: { width: "100%" } } }}
                   >
@@ -127,17 +132,11 @@ export default function Home() {
                 </StyledAction>
               </Card>
             </center>
-            {showCreateModal && (
-              <CreateModal
-                isOpen={showCreateModal}
-                onClose={() => setCreateModal(false)}
-              />
-            )}
           </section>
         </FlexGridItem>
         <FlexGridItem className="homeCols" {...itemProps}>
           <section style={{ width: "100%" }}>
-            <h1 style={{ marginLeft: "40%" }}>🔥 Hot Topics</h1>
+            <h1 style={{ marginLeft: "37%" }}>🔥 Hot Topics</h1>
             <center>
               <ul
                 className={css({
@@ -151,10 +150,7 @@ export default function Home() {
                     <ListItem
                       endEnhancer={() => (
                         <Button
-                          onClick={() => {
-                            setShowModal(true);
-                            setSelectTopic(idx);
-                          }}
+                          onClick={() => setIsOpen(true)}
                           size="compact"
                           kind="minimal"
                         >
@@ -177,10 +173,7 @@ export default function Home() {
                     <ListItem
                       endEnhancer={() => (
                         <Button
-                          onClick={() => {
-                            setShowModal(true);
-                            setSelectTopic(idx);
-                          }}
+                          onClick={() => setIsOpen(true)}
                           size="compact"
                           kind="minimal"
                         >
@@ -196,13 +189,32 @@ export default function Home() {
                 )}
               </ul>
             </center>
-            {showModal && (
-              <JoinModal
-                topic={topics[selectTopic]}
-                isOpen={showModal}
-                onClose={() => setShowModal(false)}
-              />
-            )}
+
+            <Modal
+              onClose={() => setIsOpen(false)}
+              closeable
+              isOpen={isOpen}
+              animate
+              autoFocus
+              size={SIZE.default}
+              role={ROLE.dialog}
+            >
+              <ModalHeader>Hello world</ModalHeader>
+              <ModalBody>
+                Proin ut dui sed metus pharetra hend rerit vel non mi. Nulla
+                ornare faucibus ex, non facilisis nisl. Maecenas aliquet mauris
+                ut tempus.
+              </ModalBody>
+              <ModalFooter>
+                <ModalButton
+                  onClick={() => setIsOpen(false)}
+                  kind={KIND.minimal}
+                >
+                  Cancel
+                </ModalButton>
+                <ModalButton kind={KIND.minimal}>Join</ModalButton>
+              </ModalFooter>
+            </Modal>
           </section>
         </FlexGridItem>
         <FlexGridItem  className="homeCols" {...itemProps}>

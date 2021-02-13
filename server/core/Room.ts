@@ -107,5 +107,5 @@ class Room{
     }
 }
 
-const roomPool = new Set<string>();
+const roomPool = new Map<string, boolean>();
 export {Room, RoomUser, roomPool};

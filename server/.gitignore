@@ -1,3 +1,4 @@
 node_modules/
 key.json
 redis.json
+prod-redis.json

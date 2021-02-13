@@ -1,37 +1,37 @@
 
 var io = require("socket.io-client");
+const fetch = require("node-fetch");
 
 
 let socket = io.connect("http://localhost:5000");
 
-socket.on("connect", () => {
-    console.log("Connected...");
-})
-const room = "25652";
-const roomCreate = {
-    roomId: room,
-    userId: "Ramko9999",
-    topicDetails: {
-        title: "World Eater",
-        description: "They are nice",
-    },
-    degree: 1
-};
 
+fetch("http://localhost:5000/room", {
+    method: "POST"
+}).then((async (resp) => {
+    const {roomId} = await resp.json();
+    console.log(roomId);
+    const roomOptions = {
+        roomId: roomId,
+        userId: "Ramko9999",
+        topicDetails: {
+            title: "World Eater",
+            description: "They are nice",
+        },
+        degree: 1
+    };
+    socket.emit("join", roomOptions);
+    socket.on("disconnect", () => {
+        console.log("Killng ramko9999");
+    });
 
-
-socket.emit("create", roomCreate);
-
-socket.on("disconnect", () => {
-    console.log("Killng ramko9999");
-})
-
-setTimeout(() => {
     socket.emit("chatMessage", {
         text: "Hi!",
         authorId: "Ramko9999"
     });
-}, 1000);
+
+}));
+
 
 
 
