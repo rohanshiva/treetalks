@@ -15,10 +15,10 @@ fetch("http://localhost:5000/room", {
         roomId: roomId,
         userId: "Ramko9999",
         topicDetails: {
-            title: "World Eater",
-            description: "They are nice",
+            title: "Abortion",
+            description: "Abortion stuff",
         },
-        degree: 1
+        degree: 99
     };
     socket.emit("join", roomOptions);
     socket.on("disconnect", () => {

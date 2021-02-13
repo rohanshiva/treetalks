@@ -95,6 +95,15 @@ class Room{
         return JSON.stringify(this);
     }
 
+    getOwnerDegree(){
+        const owner = this.speakers.filter((speaker) => speaker.id === this.ownerId)[0];
+        return owner.degree;
+    }
+
+    getTopicTitle(){
+        return this.topicDetails.title;
+    }
+
     static from({id, speakers, ownerId, topicDetails, chatHistory}: {id:string, speakers:RoomUser[], ownerId:string, topicDetails:TopicDetails, chatHistory:Message[]}){
         return new Room(id, speakers, ownerId, topicDetails, chatHistory);
     }
