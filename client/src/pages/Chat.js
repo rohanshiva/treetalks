@@ -13,12 +13,15 @@ import micOff from "../images/mic-off.svg";
 import { Avatar } from "baseui/avatar";
 import "./styles.css";
 
+import TweetModal from "../components/TweetModal";
+
 export default function Chat() {
   const [css, theme] = useStyletron();
   const inputRef = React.useRef(null);
 
   const [player1Mute, setPlayer1Mute] = useState(true);
   const [player2Mute, setPlayer2Mute] = useState(true);
+  const [showTweetModal, setShowTweetModal] = useState(false);
 
   const toggleMute = (player) =>{
     if(player == "player1"){
@@ -108,8 +111,8 @@ export default function Chat() {
           </StyledBody>
 
           <StyledAction>
-            <Button overrides={{ BaseButton: { style: { width: "100%" } } }}>
-              End Chat
+            <Button overrides={{ BaseButton: { style: { width: "100%" } } }} onClick={() => setShowTweetModal(true)} >
+              End Discussion
             </Button>
           </StyledAction>
         </Card>
@@ -151,6 +154,7 @@ export default function Chat() {
           </form>
         </div>
       </FlexGridItem>
+      {showTweetModal ? (<TweetModal  isOpen={true}  onClose={() => setShowTweetModal(false)} />) : (null)}
     </FlexGrid>
   );
 }
