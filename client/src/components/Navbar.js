@@ -5,7 +5,7 @@ import {
   StyledNavigationItem,
 } from "baseui/header-navigation";
 import { Modal, ModalHeader, ModalBody, SIZE, ROLE } from "baseui/modal";
-import { Button } from "baseui/button";
+import { Button, SHAPE } from "baseui/button";
 import { Notification, KIND } from "baseui/notification";
 import LoginForm from "./LoginForm";
 
@@ -87,15 +87,18 @@ export default function Navbar() {
       <HeaderNavigation>
         <StyledNavigationList $align={ALIGN.left}>
           <StyledNavigationItem>
-            <Button> Tree Talks</Button>
+            <h2> Tree Talks</h2>
           </StyledNavigationItem>
         </StyledNavigationList>
         <StyledNavigationList $align={ALIGN.center} />
         <StyledNavigationList $align={ALIGN.right}>
           <StyledNavigationItem>
-            <Button onClick={() => handleAuth()}>
-              {user ? "Log Out" : "Login"}
-            </Button>
+            {user ? (   <Button onClick={() => handleAuth()} style = {{borderRadius: "25px"}}>
+            {user.displayName}
+            </Button>): (   <Button onClick={() => handleAuth()} style = {{borderRadius: "25px"}}>
+            Login
+            </Button>)}
+         
           </StyledNavigationItem>
         </StyledNavigationList>
         <StyledNavigationList $align={ALIGN.right} />
