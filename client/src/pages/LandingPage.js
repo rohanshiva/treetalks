@@ -17,7 +17,6 @@ export default function LandingPage() {
             Create a room, invite your friends, and race to debug the problems
           </Heading>
         </HeadingLevel>
-        <img alt ="sponge.io" src="https://github.com/rohanshiva/treetalks/blob/master/src/images/landingPage1.png?raw=true" />
       </section>
 
     </div>
