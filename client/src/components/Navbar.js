@@ -14,8 +14,8 @@ import React, { useState } from "react";
 import firebase from "firebase/app";
 import "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
-import {createUser} from "../../apis/User";
-
+import {createUser} from "../apis/User";
+import {getUser} from "../apis/User";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,9 +31,8 @@ export default function Navbar() {
     }
   };
 
-  const login = () => {
+  const login = async() => {
     var provider = new firebase.auth.GoogleAuthProvider();
-
     firebase
       .auth()
       .signInWithPopup(provider)
@@ -44,12 +43,14 @@ export default function Navbar() {
           firebase.auth().currentUser.metadata.lastSignInTime
         ) {
 
+          console.log("new user");
+
           var newUser = {
             email: firebase.auth().currentUser.email,
             username: firebase.auth().currentUser.displayName,
             id: firebase.auth().currentUser.uid
           }
-
+          
           createUser(newUser);
         
         } else {
@@ -68,7 +69,6 @@ export default function Navbar() {
   };
 
   const logout = () => {
-    console.log(user);
     firebase
       .auth()
       .signOut()

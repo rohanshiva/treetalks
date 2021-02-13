@@ -1,6 +1,7 @@
 import "./App.css";
 import Navbar from "./components/Navbar";
 import LandingPage from "./pages/LandingPage";
+import Home from "./pages/Home";
 import React from "react";
 
 import { BaseProvider } from "baseui";
@@ -12,6 +13,8 @@ import firebase from "firebase/app";
 import "firebase/auth";
 
 import { useAuthState } from "react-firebase-hooks/auth";
+
+
 
 var firebaseConfig = {
   apiKey: "AIzaSyAKGg3SA1dseQKEL-xRreH-b1PE5SBb9rA",
@@ -25,8 +28,6 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-
-
 const engine = new Styletron();
 function App() {
   const [user] = useAuthState(firebase.auth());
@@ -35,7 +36,7 @@ function App() {
     <StyletronProvider value={engine}>
       <BaseProvider theme={LightTheme}>
         <Navbar />
-        {user ? <h1>Logged In!</h1> : <LandingPage />}
+        {user ? <h1>Logged In!</h1> : <Home />}
       </BaseProvider>
     </StyletronProvider>
   );
