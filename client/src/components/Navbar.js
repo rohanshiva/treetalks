@@ -16,6 +16,7 @@ import "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import {createUser} from "../apis/User";
 import {getUser} from "../apis/User";
+import "./styles.css";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -84,21 +85,20 @@ export default function Navbar() {
 
   return (
     <div>
-      <HeaderNavigation>
+      <HeaderNavigation className="navbarAll">
         <StyledNavigationList $align={ALIGN.left}>
           <StyledNavigationItem>
-             <h3> Let's Talk </h3>
+            <h2> Tree Talks</h2>
           </StyledNavigationItem>
         </StyledNavigationList>
         <StyledNavigationList $align={ALIGN.center} />
         <StyledNavigationList $align={ALIGN.right}>
           <StyledNavigationItem>
-            {user ? (   <Button onClick={() => handleAuth()} style = {{borderRadius: "25px"}}>
-            {user.username}
-            </Button>): (   <Button onClick={() => handleAuth()} style = {{borderRadius: "25px"}}>
+            {user ? (   <Button onClick={() => logout()} style = {{borderRadius: "25px"}}>
+            {user.displayName}
+            </Button>): (   <Button onClick={() => login()} style = {{borderRadius: "25px"}}>
             Login
             </Button>)}
-         
           </StyledNavigationItem>
         </StyledNavigationList>
         <StyledNavigationList $align={ALIGN.right} />

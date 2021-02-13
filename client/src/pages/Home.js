@@ -14,6 +14,7 @@ import {
 import { FlexGrid, FlexGridItem } from "baseui/flex-grid";
 import { Card, StyledBody, StyledAction } from "baseui/card";
 import news from "../data/news.json";
+import "./styles.css";
 
 const itemProps = {
   height: "100%",
@@ -43,8 +44,8 @@ export default function Home() {
   return (
     <div>
       <FlexGrid flexGridColumnCount={3} flexGridColumnGap="scale100">
-        <FlexGridItem {...itemProps}>
-          <section style={{ width: "100%" }}>
+        <FlexGridItem {...itemProps} className="homeCols">
+          <section style={{ width: "100%"}}>
             <center>
               <Card
                 overrides={{
@@ -68,9 +69,9 @@ export default function Home() {
             </center>
           </section>
         </FlexGridItem>
-        <FlexGridItem {...itemProps}>
+        <FlexGridItem {...itemProps} className="homeCols">
           <section style={{ width: "100%" }}>
-            <h1 style={{ marginLeft: "40%" }}>🔥 Hot Topics</h1>
+            <h1 style={{ marginLeft: "37%" }}>🔥 Hot Topics</h1>
             <center>
               <ul
                 className={css({
@@ -151,7 +152,7 @@ export default function Home() {
             </Modal>
           </section>
         </FlexGridItem>
-        <FlexGridItem {...itemProps}>
+        <FlexGridItem {...itemProps} className="homeCols">
           <FlexGrid
             flexGridColumnCount={1}
             flexGridColumnGap="scale800"

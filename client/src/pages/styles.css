@@ -1,0 +1,18 @@
+.container{
+    display: flex;
+    align-items: center;
+  }
+  
+  .border{
+    border-bottom: 1px solid black;
+    width: 100%;
+  }
+
+  @media (max-width: 1500px) {
+    .homeCols {
+      min-width: 100%;
+    }
+    .navbarAll { 
+      min-width: 100%;
+    }
+  }

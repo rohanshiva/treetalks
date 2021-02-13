@@ -1,7 +1,7 @@
 import { Callback } from "redis";
 import { Socket, Server } from "socket.io";
 import { redisClient } from "./HttpServer";
-import { Room } from "./Room";
+import { Room, roomPool, TopicDetails } from "./Room";
 import { randomBytes } from "crypto";
 import moment from "moment";
 
@@ -11,19 +11,24 @@ const onRedisSet = (err: Error, reply: string) => {
     }
 }
 
+
+const getRoomId = (rooms: Set<string>) => {
+    return Array.from(rooms)[1];
+}
+
 const onDisconnecting = (socket: Socket, io: Server) => {
     return () => {
         if (socket.rooms.size > 0) {
-            const roomId = Array.from(socket.rooms)[0];
+            const roomId = getRoomId(socket.rooms);
             redisClient.get(roomId, (err, result) => {
                 if (err != null || result == null) {
                     return;
                 }
-
                 let room = Room.from(JSON.parse(result));
                 room.onSpeakerLeave(socket.id);
                 if (room.isEmpty()) {
                     //terminate room from data structure
+                    roomPool.delete(roomId);
                     redisClient.del(roomId);
                 }
                 else {
@@ -40,7 +45,7 @@ type CreateRoom = {
     roomId: string,
     userId: string,
     degree: number
-    topicDetails: string
+    topicDetails: TopicDetails
 }
 
 const onCreate = (socket: Socket, io: Server) => {
@@ -52,7 +57,8 @@ const onCreate = (socket: Socket, io: Server) => {
             degree: degree,
             anonUsername: userId
         });
-        room.setTopicDetails(topicDetails)
+        room.setTopicDetails(topicDetails);
+        roomPool.add(roomId);
         redisClient.set(roomId, room.serialize(), onRedisSet as Callback<string>);
         socket.join(roomId);
         io.to(roomId).emit("room", room.serialize());
@@ -93,7 +99,7 @@ type CreateMessage = {
 const onMessage = (socket: Socket, io: Server) => {
     return ({ authorId, text }: CreateMessage) => {
         if (socket.rooms.size > 0) {
-            const roomId = Array.from(socket.rooms)[0];
+            const roomId = getRoomId(socket.rooms);
             const createdAt = moment.utc().format();
             const message = {
                 authorId: authorId,
