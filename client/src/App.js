@@ -2,12 +2,13 @@ import "./App.css";
 import Navbar from "./components/Navbar";
 import LandingPage from "./pages/LandingPage";
 import Home from "./pages/Home";
+import Chat from "./pages/Chat"
 import React from "react";
 
 import { BaseProvider } from "baseui";
 import { Provider as StyletronProvider } from "styletron-react";
 import { Client as Styletron } from "styletron-engine-atomic";
-import { LightTheme } from "baseui";
+import { LightTheme} from "baseui";
 
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -34,7 +35,7 @@ function App() {
     <StyletronProvider value={engine}>
       <BaseProvider theme={LightTheme}>
         <Navbar />
-        {user ? <h1>Logged In!</h1> : <Home />}
+        {user ? (<Chat/>) : <Home />}
       </BaseProvider>
     </StyletronProvider>
   );
