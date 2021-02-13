@@ -24,19 +24,19 @@ const itemProps = {
 
 export default function Home() {
   const topics = [
-    { emoji: "🤰 ", title: " Abortion", description: "Babies" },
-    { emoji: "🌳 ", title: " Climate Change", description: "Babies" },
-    { emoji: "✊🏿 ", title: " Affirmative Action", description: "Babies" },
-    { emoji: "💵 ", title: " Universal Basic Income", description: "Babies" },
-    { emoji: "🌈 ", title: " Gay Marriage", description: "Babies" },
-    { emoji: "💣 ", title: " Millitary Spending", description: "Babies" },
-    { emoji: "🏥 ", title: " Universal Healthcare", description: "small" },
-    { emoji: "📑 ", title: " Taxes", description: "small" },
-    { emoji: "🦠 ", title: " Corona Virus Vaccine", description: "small" },
-    { emoji: "🔫 ", title: " Gun Control", description: "small" },
-    { emoji: "🌎 ", title: " International Affairs", description: "small" },
-    { emoji: "🐘 ", title: " Poaching", description: "small" },
-    { emoji: "🔌 ", title: " Capital Punishment", description: "small" },
+    { emoji: "🤰 ", title: "Abortion", description: "Babies" },
+    { emoji: "🌳 ", title: "Climate Change", description: "Babies" },
+    { emoji: "✊🏿 ", title: "Affirmative Action", description: "Babies" },
+    { emoji: "💵 ", title: "Universal Basic Income", description: "Babies" },
+    { emoji: "🌈 ", title: "Gay Marriage", description: "Babies" },
+    { emoji: "💣 ", title: "Millitary Spending", description: "Babies" },
+    { emoji: "🏥 ", title: "Universal Healthcare", description: "small" },
+    { emoji: "📑 ", title: "Taxes", description: "small" },
+    { emoji: "🦠 ", title: "Corona Virus Vaccine", description: "small" },
+    { emoji: "🔫 ", title: "Gun Control", description: "small" },
+    { emoji: "🌎 ", title: "International Affairs", description: "small" },
+    { emoji: "🐘 ", title: "Poaching", description: "small" },
+    { emoji: "🔌 ", title: "Capital Punishment", description: "small" },
   ];
   const [isOpen, setIsOpen] = useState(false);
   const [css] = useStyletron();
