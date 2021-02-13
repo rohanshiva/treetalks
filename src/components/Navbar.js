@@ -7,6 +7,7 @@ import {
 import { Modal, ModalHeader, ModalBody, SIZE, ROLE } from "baseui/modal";
 import { Button } from "baseui/button";
 import LoginForm from "./LoginForm";
+import { KIND as ButtonKind } from "baseui/button";
 
 import React, { useState } from "react";
 
@@ -17,13 +18,13 @@ export default function Navbar() {
       <HeaderNavigation>
         <StyledNavigationList $align={ALIGN.left}>
           <StyledNavigationItem>
-            <Button> Tree Talks</Button>
+            <Button kind={ButtonKind.tertiary} > Tree Talks</Button>
           </StyledNavigationItem>
         </StyledNavigationList>
         <StyledNavigationList $align={ALIGN.center} />
         <StyledNavigationList $align={ALIGN.right}>
           <StyledNavigationItem>
-            <Button onClick={() => setIsOpen(true)}>Log in</Button>
+            <Button   onClick={() => setIsOpen(true)} kind={ButtonKind.tertiary}>Log in</Button>
           </StyledNavigationItem>
         </StyledNavigationList>
         <StyledNavigationList $align={ALIGN.right} />
