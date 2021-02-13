@@ -1,17 +1,32 @@
-const fetch = require("node-fetch");
+
+var io = require("socket.io-client");
 
 
-fetch("http://localhost:5000/user", {
-    headers:{
-        "Content-Type": "application/json"
-    },
-    method: "POST",
-    body:JSON.stringify({
-        email: "ramapitchala@gmail.com",
-        id: "Ramko9999",
-        username: "Ramko9999"
+let socket = io.connect("http://localhost:5000");
+
+
+const roomCreate = {
+    roomId: "1xl-1js",
+    userId: "Ramko9999",
+    topicDetails: "World Eaters are bad for heatlh",
+    degree: 1
+};
+
+
+
+socket.emit("create", roomCreate);
+
+setTimeout(() => {
+    let socket2 = io.connect("http://localhost:5000");
+    socket2.emit("join", {
+        roomId: "1xl-1js",
+        userId: "Sponged",
+        degree: 5
+    });
+
+    socket2.on("room", (room) => {
+        console.log(room);   
     })
-}).then(async(res) => {
-    let json = await res.json();
-    console.log(json);
-}); 
+}, 500);
+
+
