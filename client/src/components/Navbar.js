@@ -87,7 +87,7 @@ export default function Navbar() {
       <HeaderNavigation>
         <StyledNavigationList $align={ALIGN.left}>
           <StyledNavigationItem>
-            <Button shape = {SHAPE.pill} > Tree Talks</Button>
+             <h3> Let's Talk </h3>
           </StyledNavigationItem>
         </StyledNavigationList>
         <StyledNavigationList $align={ALIGN.center} />

@@ -24,19 +24,19 @@ const itemProps = {
 
 export default function Home() {
   const topics = [
-    { title: "🤰 Abortion", description: "Babies" },
-    { title: "🌳 Climate Change", description: "Babies" },
-    { title: "✊🏿 Affirmative Action", description: "Babies" },
-    { title: "💵 Universal Basic Income", description: "Babies" },
-    { title: "🌈 Gay Marriage", description: "Babies" },
-    { title: "💣 Millitary Spending", description: "Babies" },
-    { title: "🏥 Universal Healthcare", description: "small" },
-    { title: "📑 Taxes", description: "small" },
-    { title: "🦠 Corona Virus Vaccine", description: "small" },
-    { title: "🔫 Gun Control", description: "small" },
-    { title: "🌎 International Affairs", description: "small" },
-    { title: "🐘 Poaching", description: "small" },
-    { title: "🔌 Capital Punishment", description: "small" },
+    { emoji: "🤰 ", title: " Abortion", description: "Babies" },
+    { emoji: "🌳 ", title: " Climate Change", description: "Babies" },
+    { emoji: "✊🏿 ", title: " Affirmative Action", description: "Babies" },
+    { emoji: "💵 ", title: " Universal Basic Income", description: "Babies" },
+    { emoji: "🌈 ", title: " Gay Marriage", description: "Babies" },
+    { emoji: "💣 ", title: " Millitary Spending", description: "Babies" },
+    { emoji: "🏥 ", title: " Universal Healthcare", description: "small" },
+    { emoji: "📑 ", title: " Taxes", description: "small" },
+    { emoji: "🦠 ", title: " Corona Virus Vaccine", description: "small" },
+    { emoji: "🔫 ", title: " Gun Control", description: "small" },
+    { emoji: "🌎 ", title: " International Affairs", description: "small" },
+    { emoji: "🐘 ", title: " Poaching", description: "small" },
+    { emoji: "🔌 ", title: " Capital Punishment", description: "small" },
   ];
   const [isOpen, setIsOpen] = useState(false);
   const [css] = useStyletron();
@@ -70,7 +70,7 @@ export default function Home() {
         </FlexGridItem>
         <FlexGridItem {...itemProps}>
           <section style={{ width: "100%" }}>
-            <h1 style={{ marginLeft: "2.5em" }}>🔥 Hot Topics</h1>
+            <h1 style={{ marginLeft: "11.5em" }}>🔥 Hot Topics</h1>
             <center>
               <ul
                 className={css({
@@ -100,7 +100,7 @@ export default function Home() {
                       }}
                     >
                       <ListItemLabel>
-                        <h4>{topic.title}</h4>
+                        <h4>{topic.emoji} {topic.title}</h4>
                       </ListItemLabel>
                     </ListItem>
                   ) : (
@@ -116,7 +116,7 @@ export default function Home() {
                       )}
                     >
                       <ListItemLabel>
-                        <h4>{topic.title}</h4>
+                        <h4>{topic.emoji} {topic.title}</h4>
                       </ListItemLabel>
                     </ListItem>
                   )
