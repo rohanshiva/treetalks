@@ -3,6 +3,7 @@ import { ListItem, ListItemLabel, ARTWORK_SIZES } from "baseui/list";
 import { useStyletron } from "baseui";
 import { Button } from "baseui/button";
 
+
 import { FlexGrid, FlexGridItem } from "baseui/flex-grid";
 import { Card, StyledBody, StyledAction, StyledThumbnail } from "baseui/card";
 import news from "../data/news.json";
@@ -101,7 +102,9 @@ export default function Home() {
 
             {news.map((topic) => (
               <FlexGridItem {...itemProps}>
+        
                 <Card
+
                   overrides={{
                     Root: { style: { width: "324px", border: "none" } },
                     HeaderImage: {
@@ -114,6 +117,8 @@ export default function Home() {
                 >
                   <h4>{topic.description}</h4>
                 </Card>
+          
+               
               </FlexGridItem>
             ))}
           </FlexGrid>
