@@ -15,9 +15,11 @@ export async function createRoom(){
     };
 }
 
-export async function findRoom(topicDetails, degree){
-    let body = JSON.parse(JSON.stringify(topicDetails));
-    body.degree = degree;
+export async function findRoom(topicTitle, degree){
+    let body = {
+        title: topicTitle,
+        degree: degree
+    };
     const options = {
         headers: {
             "Content-Type": "application/json"
