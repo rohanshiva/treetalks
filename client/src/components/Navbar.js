@@ -93,9 +93,9 @@ export default function Navbar() {
         <StyledNavigationList $align={ALIGN.center} />
         <StyledNavigationList $align={ALIGN.right}>
           <StyledNavigationItem>
-            {user ? (   <Button onClick={() => handleAuth()} style = {{borderRadius: "25px"}}>
-            {user.username}
-            </Button>): (   <Button onClick={() => handleAuth()} style = {{borderRadius: "25px"}}>
+            {user ? (   <Button onClick={() => logout()} style = {{borderRadius: "25px"}}>
+            {user.displayName}
+            </Button>): (   <Button onClick={() => login()} style = {{borderRadius: "25px"}}>
             Login
             </Button>)}
          
