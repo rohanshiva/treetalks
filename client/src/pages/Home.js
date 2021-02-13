@@ -107,9 +107,11 @@ export default function Home() {
                 flexDirection: "column"}}>
             {news.map((topic) => (
               <FlexGridItem {...itemProps}>
-        
+                <div onClick={() => (
+                     window.open(topic.url)
+                    )} >
                 <Card
-
+                  
                   overrides={{
                     Root: { style: { width: "324px", border: "none" } },
                     HeaderImage: {
@@ -122,7 +124,7 @@ export default function Home() {
                 >
                   <h4>{topic.description}</h4>
                 </Card>
-          
+                </div>
                
               </FlexGridItem>
             ))}
