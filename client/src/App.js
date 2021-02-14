@@ -39,14 +39,11 @@ function App() {
       <BaseProvider theme={LightTheme}>
         <Navbar />
         {user ? (
-          <Router>
+         
             <Switch>
               <Route exact path="/" component={Home} />
-
-                <Route exact path="/:roomId" component={Room} />
-
+              <Route exact path="/:roomId" component={Room} />
             </Switch>
-          </Router>
         ) : (
           <LandingPage />
         )}

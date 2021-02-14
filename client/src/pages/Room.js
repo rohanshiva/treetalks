@@ -18,7 +18,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import io from "socket.io-client";
 import { Avatar } from "baseui/avatar";
 import "./styles.css";
-
+import { useLocation } from "react-router-dom";
 const socket = io.connect("http://localhost:5000");
 
 
@@ -27,6 +27,8 @@ const getRoomId = (path) => {
 }
 
 export default function Room(props) {
+  const location = useLocation();
+  const topic = location.state.params;
   const [user] = useAuthState(firebase.auth());
   const roomID = getRoomId(props.location.pathname);
   const [valid, setValid] = useState(true);
@@ -37,10 +39,9 @@ export default function Room(props) {
   const [player2Mute, setPlayer2Mute] = useState(true);
 
   useEffect(() => {
-
     const roomOptions = {
       roomId: roomID,
-      userId: "Ramko9999",
+      userId: user.displayName,
       topicDetails: {
         title: "World Eater",
         description: "They are nice",
@@ -53,15 +54,15 @@ export default function Room(props) {
     socket.on("room", (data) => {
       console.log(data)
     });
-
-
   }, []);
 
   const onMessageSubmit = e => {
     e.preventDefault()
     const { name, message } = state
-    socket.emit('message', { name, message })
-    setStaet({ message: '', name })
+    socket.emit("chatMessage", {
+      text: message,
+      authorId: name
+  });
   }
 
   const toggleMute = (player) => {
@@ -135,7 +136,7 @@ export default function Room(props) {
             overrides={{
               Root: { style: { width: "400px", margin: "5rem" } },
             }}
-            title={`Let's talk about ${props.topicName}!`}
+            title={`Let's talk about ${topic.topicName}!`}
           >
             <StyledBody>
               Create a private room to debate with your friends on any topic.
