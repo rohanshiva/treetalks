@@ -8,13 +8,16 @@ import {
   SIZE,
   ROLE,
 } from "baseui/modal";
+import firebase from "firebase/app";
+import "firebase/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { Button, SHAPE, KIND } from "baseui/button";
 
 import { Slider } from "baseui/slider";
 import { useStyletron } from "baseui";
 
 export default function JoinModal({ isOpen, onClose, topic }) {
-  const [value, setValue] = React.useState([100]);
+  const [value, setValue] = React.useState([99]);
   const [css, theme] = useStyletron();
   return (
     <Modal
@@ -33,7 +36,7 @@ export default function JoinModal({ isOpen, onClose, topic }) {
           <Slider
             value={value}
             min={0}
-            max={100}
+            max={99}
             step={1}
             onChange={(params) => {
               if (params.value) {

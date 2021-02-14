@@ -15,6 +15,22 @@ export async function createRoom(){
     };
 }
 
+export async function validateRoom(roomId) {
+
+    const url = new URL(Endpoint + `/room/validate/${roomId}`);
+    const response = await fetch(url);
+    if (response.status !== 200) {
+        const {message} = await response.json();
+        console.log(message);
+        throw Error(message);
+    }
+    else {
+        const {doesRoomExist} = await response.json();
+        return doesRoomExist;
+    }
+    
+}
+
 export async function findRoom(topicTitle, degree){
     let body = {
         title: topicTitle,

@@ -13,9 +13,9 @@ import { FormControl } from "baseui/form-control";
 import { Input } from "baseui/input";
 import { Textarea } from "baseui/textarea";
 
-export default function TweetModal({ isOpen, onClose}) {
+export default function TweetModal({ isOpen, onClose, topicName}) {
   const websiteUrl = "https://github.com/rohanshiva/treetalks"
-  const topicName = "Climate Change";
+  topicName = "Climate Change";
   const constantTweet = `Today, I had the pleasure to discuss about ${topicName}. `
   const charsLeft = 280 - constantTweet.length - topicName.length - websiteUrl.length;
 
