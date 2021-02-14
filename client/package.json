@@ -9,6 +9,8 @@
     "axios": "^0.21.1",
     "baseui": "^9.110.0",
     "firebase": "^8.2.7",
+    "history": "^5.0.0",
+    "moment": "^2.29.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-firebase-hooks": "^2.2.0",

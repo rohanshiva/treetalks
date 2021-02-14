@@ -8,18 +8,16 @@ import {
   SIZE,
   ROLE,
 } from "baseui/modal";
-import { Link } from "react-router-dom";
-import { Button, SHAPE, KIND } from "baseui/button";
+import { KIND } from "baseui/button";
 import { FormControl } from "baseui/form-control";
 import { Input } from "baseui/input";
 import {createRoom} from '../apis/Room';
 import { useHistory } from "react-router-dom";
 
 
-export default function CreateModal({ isOpen, onClose }) {
+export default function CreateModal({ isOpen, onClose, topicName, topicDetails }) {
 const history = useHistory();
- const [join, setJoin] = useState(false);
- const [topic, setTopic] = useState({topicName: "What's the topic", topicDetails: "Topic details"});
+ const [topic, setTopic] = useState({topicName: "Issue Topic", topicDetails: "Issue Description"});
  const onTopicChange = ({ target: { value } }) => {
     setTopic({...topic, topicName: value});
   };
@@ -29,7 +27,11 @@ const history = useHistory();
 
   const handleJoin = async () => {
     const room = await createRoom(); 
-    history.push(`/${room}`, { params: topic})
+    const topicDetails = {
+      title: topic.topicName,
+      details: topic.topicDetails
+    };
+    history.push(`/${room}`, { params: topicDetails, isCustom: true})
   };
   return (
     <Modal

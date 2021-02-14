@@ -11,6 +11,8 @@ import { getNews } from "../apis/News";
 import "./styles.css";
 import JoinModal from "../components/JoinModal";
 import CreateModal from "../components/CreateModal";
+import {getNews} from "../apis/News";
+import "./styles.css";
 
 import { toaster, ToasterContainer } from "baseui/toast";
 
@@ -122,6 +124,17 @@ export default function Home() {
   const [showModal, setShowModal] = useState(false);
   const [showCreateModal, setCreateModal] = useState(false);
   const [selectTopic, setSelectTopic] = useState(0);
+  const [queriedNews, setQueriedNews] = useState([]);
+  const renderNews = async () => {
+    var data = await getNews();
+    console.log("findMe", data);
+    setQueriedNews(data.articles);
+  }
+
+  useEffect(() => {
+    renderNews();
+  }, []);
+
   const [css] = useStyletron();
   return (
     <div>
@@ -248,27 +261,25 @@ export default function Home() {
                 flexDirection: "column",
               }}
             >
-              {queriedNews.length > 0
-                ? queriedNews.map((topic) => (
-                    <FlexGridItem {...itemProps}>
-                      <div onClick={() => window.open(topic.url)}>
-                        <Card
-                          overrides={{
-                            Root: { style: { width: "324px", border: "none" } },
-                            HeaderImage: {
-                              style: ({ $theme }) => ({
-                                borderRadius: "25px",
-                              }),
-                            },
-                          }}
-                          headerImage={topic.urlToImage}
-                        >
-                          <h4>{topic.title}</h4>
-                        </Card>
-                      </div>
-                    </FlexGridItem>
-                  ))
-                : null}
+              {queriedNews.length > 0 ? (queriedNews.map((topic) => (
+                <FlexGridItem {...itemProps}>
+                  <div onClick={() => window.open(topic.url)}>
+                    <Card
+                      overrides={{
+                        Root: { style: { width: "324px", border: "none" } },
+                        HeaderImage: {
+                          style: ({ $theme }) => ({
+                            borderRadius: "25px",
+                          }),
+                        },
+                      }}
+                      headerImage={topic.urlToImage}
+                    >
+                      <h4>{topic.title}</h4>
+                    </Card>
+                  </div>
+                </FlexGridItem>
+              ))): (null)}
             </div>
           </FlexGrid>
         </FlexGridItem>

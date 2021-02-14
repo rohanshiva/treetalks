@@ -15,7 +15,7 @@ import { LightTheme } from "baseui";
 import firebase from "firebase/app";
 import "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
-import CreateModal from "./components/CreateModal";
+import SocketState from "./context/SocketContext";
 
 
 var firebaseConfig = {
@@ -39,11 +39,16 @@ function App() {
       <BaseProvider theme={LightTheme}>
         <Navbar />
         {user ? (
-         
+      
             <Switch>
               <Route exact path="/" component={Home} />
-              <Route exact path="/:roomId" component={Room} />
+              <SocketState
+                url="http://localhost:5000"
+              >
+                <Route exact path="/:roomId" component={Room} />
+              </SocketState>
             </Switch>
+
         ) : (
           <LandingPage />
         )}

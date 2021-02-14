@@ -8,17 +8,33 @@ import {
   SIZE,
   ROLE,
 } from "baseui/modal";
-import firebase from "firebase/app";
 import "firebase/auth";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { Button, SHAPE, KIND } from "baseui/button";
 
 import { Slider } from "baseui/slider";
 import { useStyletron } from "baseui";
+import {findRoom, createRoom} from "../apis/Room";
+import { useHistory } from "react-router-dom";
 
-export default function JoinModal({ isOpen, onClose, topic }) {
+export default function JoinModal({ isOpen, onClose, topic}) {
+  const history = useHistory();
   const [value, setValue] = React.useState([99]);
   const [css, theme] = useStyletron();
+
+  const handleJoin = async () => {
+    const room = await createRoom(); 
+    history.push(`/${room}`, {params: topic, isCustom: false, degree:value[0]})
+  };
+
+  const getRoom = async () => {
+    try{
+      const room = await findRoom(topic.title, value);
+      history.push(`/${room}`);
+    }catch(error){
+      await handleJoin();
+    }
+  }
+  
   return (
     <Modal
       onClose={onClose}
@@ -85,7 +101,9 @@ export default function JoinModal({ isOpen, onClose, topic }) {
         <ModalButton onClick={onClose} kind={KIND.minimal}>
           Cancel
         </ModalButton>
-        <ModalButton kind={KIND.minimal}>Join</ModalButton>
+        <ModalButton kind={KIND.minimal} onClick={async () => {
+          await getRoom();
+        }}>Join</ModalButton>
       </ModalFooter>
     </Modal>
   );

@@ -6,7 +6,7 @@ type RoomUser = {
     isSpeaker: boolean,
     degree: number,
     anonUsername: string,
-    id:string
+    id:string,
 }
 
 export type TopicDetails = {
@@ -21,13 +21,15 @@ class Room{
     ownerId:string
     topicDetails:TopicDetails
     chatHistory:Message[]
+    isCustom: boolean
 
-    constructor(id:string, speakers:RoomUser[], ownerId:string, topicDetails:TopicDetails, chatHistory:Message[]){
+    constructor(id:string, speakers:RoomUser[], ownerId:string, topicDetails:TopicDetails, chatHistory:Message[], isCustom: boolean){
         this.id = id;
         this.speakers = speakers;
         this.ownerId = ownerId;
         this.topicDetails = topicDetails;
         this.chatHistory = chatHistory;
+        this.isCustom = isCustom;
     }
 
 
@@ -95,15 +97,46 @@ class Room{
         return JSON.stringify(this);
     }
 
-    static from({id, speakers, ownerId, topicDetails, chatHistory}: {id:string, speakers:RoomUser[], ownerId:string, topicDetails:TopicDetails, chatHistory:Message[]}){
-        return new Room(id, speakers, ownerId, topicDetails, chatHistory);
+    getOwnerDegree(){
+        const owner = this.speakers.filter((speaker) => speaker.id === this.ownerId)[0];
+        return owner.degree;
     }
 
-    static new(id:string){
+    getTopicTitle(){
+        return this.topicDetails.title;
+    }
+
+    getAnonUsername(id : string){
+        const speaker = this.speakers.filter((speaker, index) => speaker.id === id)[0];
+        return speaker.anonUsername;
+    }
+
+    toggleMute(id:string){
+        let index : number | null = null;
+        const speaker = this.speakers.filter((speaker, i) => {
+            if(speaker.id === id){
+                index = i;
+            }
+            return speaker.id === id;
+        });
+        if(index !== null){
+            this.speakers[index].isMuted = !this.speakers[index].isMuted;
+        }
+    }
+
+    getIsCustom(){
+        return this.isCustom;
+    }
+
+    static from({id, speakers, ownerId, topicDetails, chatHistory, isCustom}: {id:string, speakers:RoomUser[], ownerId:string, topicDetails:TopicDetails, chatHistory:Message[], isCustom: boolean}){
+        return new Room(id, speakers, ownerId, topicDetails, chatHistory, isCustom);
+    }
+
+    static new(id:string, isCustom: boolean){
         return new Room(id, [], "", {
             title: "",
             description: ""
-        }, []);
+        }, [], isCustom);
     }
 }
 

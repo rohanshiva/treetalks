@@ -1,6 +1,7 @@
 import { randomBytes } from "crypto";
 import { redisClient } from "../core/HttpServer";
 import { Room, roomPool } from "../core/Room";
+import { roomFinder } from "../core/Finder";
 import express = require("express");
 
 
@@ -18,6 +19,10 @@ type FindRoom = {
     degree: number
 }
 
+roomRouter.get("/finder", async(req, res) => {
+    res.send(roomFinder.serialize());
+});
+
 roomRouter.post("/find", async (req, res) => {
     const body = req.body;
     const fields = ["title", "degree"];
@@ -33,7 +38,26 @@ roomRouter.post("/find", async (req, res) => {
         });
     }
     else{
-        const room = "";
+        const {title, degree} : FindRoom = body;
+        try{
+            const roomId = roomFinder.getRoom(title, degree);
+            res.send({
+                roomId: roomId
+            });
+        }
+        catch(error){
+            const message = error.message;
+            if(message === "No rooms at the moment"){
+                res.status(404).send({
+                    message: "There are no avaliable rooms at the moment"
+                });
+            }
+            else{
+                res.status(500).send({
+                    message: message
+                });
+            }
+        }        
     }
 });
 
