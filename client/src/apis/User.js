@@ -15,7 +15,6 @@ export async function createUser(user) {
     }
  
     const data = await response.json();
-    console.log(data);
 }
 
 export async function getUser(id) {
@@ -29,7 +28,6 @@ export async function getUser(id) {
     }
     else{
         const data = await response.json();
-        console.log(data);
         return data;
     }
 }
