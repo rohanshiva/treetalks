@@ -20,6 +20,7 @@
     "firebase-admin": "^9.5.0",
     "firebase-functions": "^3.13.1",
     "moment": "^2.29.1",
+    "node-fetch": "^2.6.1",
     "nodemon": "^2.0.7",
     "redis": "^3.0.2",
     "socket.io": "^3.1.1",
