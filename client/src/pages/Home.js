@@ -14,8 +14,10 @@ import {
 import { FlexGrid, FlexGridItem } from "baseui/flex-grid";
 import { Card, StyledBody, StyledAction } from "baseui/card";
 import news from "../data/news.json";
-import {getNews} from "../apis/News";
+import { getNews } from "../apis/News";
 import "./styles.css";
+
+import { toaster, ToasterContainer } from "baseui/toast";
 
 const itemProps = {
   height: "100%",
@@ -25,6 +27,16 @@ const itemProps = {
 };
 
 export default function Home() {
+  
+  //will connect toast warning after other stuff is integrated.
+  
+  const [toastKey, setToastKey] = React.useState(null);
+  const showToast = () => setToastKey(toaster.warning("Please Login to Use This Feautre!"));
+  const closeToast = () => {
+    toaster.clear(toastKey);
+    setToastKey(null);
+  };
+
   const topics = [
     { emoji: "🤰", title: "Abortion", description: "Babies" },
     { emoji: "🌳", title: "Climate Change", description: "Babies" },
@@ -44,9 +56,8 @@ export default function Home() {
   const [queriedNews, setQueriedNews] = useState([]);
   const renderNews = async () => {
     var data = await getNews();
-    console.log("findMe", data);
     setQueriedNews(data.articles);
-  }
+  };
 
   useEffect(() => {
     renderNews();
@@ -58,7 +69,7 @@ export default function Home() {
     <div>
       <FlexGrid flexGridColumnCount={3} flexGridColumnGap="scale100">
         <FlexGridItem {...itemProps} className="homeCols">
-          <section style={{ width: "100%"}}>
+          <section style={{ width: "100%" }}>
             <center>
               <Card
                 overrides={{
@@ -114,7 +125,9 @@ export default function Home() {
                       }}
                     >
                       <ListItemLabel>
-                        <h4 style={{whiteSpace: "pre"}}>{topic.emoji}   {topic.title}</h4>
+                        <h4 style={{ whiteSpace: "pre" }}>
+                          {topic.emoji} {topic.title}
+                        </h4>
                       </ListItemLabel>
                     </ListItem>
                   ) : (
@@ -130,7 +143,9 @@ export default function Home() {
                       )}
                     >
                       <ListItemLabel>
-                        <h4 style={{whiteSpace: "pre"}}>{topic.emoji}   {topic.title}</h4>
+                        <h4 style={{ whiteSpace: "pre" }}>
+                          {topic.emoji} {topic.title}
+                        </h4>
                       </ListItemLabel>
                     </ListItem>
                   )
@@ -183,29 +198,33 @@ export default function Home() {
                 flexDirection: "column",
               }}
             >
-              {queriedNews.length > 0 ? (queriedNews.map((topic) => (
-                <FlexGridItem {...itemProps}>
-                  <div onClick={() => window.open(topic.url)}>
-                    <Card
-                      overrides={{
-                        Root: { style: { width: "324px", border: "none" } },
-                        HeaderImage: {
-                          style: ({ $theme }) => ({
-                            borderRadius: "25px",
-                          }),
-                        },
-                      }}
-                      headerImage={topic.urlToImage}
-                    >
-                      <h4>{topic.title}</h4>
-                    </Card>
-                  </div>
-                </FlexGridItem>
-              ))): (null)}
+              {queriedNews.length > 0
+                ? queriedNews.map((topic) => (
+                    <FlexGridItem {...itemProps}>
+                      <div onClick={() => window.open(topic.url)}>
+                        <Card
+                          overrides={{
+                            Root: { style: { width: "324px", border: "none" } },
+                            HeaderImage: {
+                              style: ({ $theme }) => ({
+                                borderRadius: "25px",
+                              }),
+                            },
+                          }}
+                          headerImage={topic.urlToImage}
+                        >
+                          <h4>{topic.title}</h4>
+                        </Card>
+                      </div>
+                    </FlexGridItem>
+                  ))
+                : null}
             </div>
           </FlexGrid>
         </FlexGridItem>
       </FlexGrid>
+      <ToasterContainer autoHideDuration={4000}> 
+    </ToasterContainer>
     </div>
   );
 }
