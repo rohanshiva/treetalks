@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ListItem, ListItemLabel } from "baseui/list";
 import { useStyletron } from "baseui";
 import { Button, SHAPE, KIND } from "baseui/button";
@@ -14,6 +14,7 @@ import {
 import { FlexGrid, FlexGridItem } from "baseui/flex-grid";
 import { Card, StyledBody, StyledAction } from "baseui/card";
 import news from "../data/news.json";
+import {getNews} from "../apis/News";
 import "./styles.css";
 
 const itemProps = {
@@ -39,6 +40,18 @@ export default function Home() {
     { emoji: "🐘", title: "Poaching", description: "small" },
     { emoji: "🔌", title: "Capital Punishment", description: "small" },
   ];
+
+  const [queriedNews, setQueriedNews] = useState([]);
+  const renderNews = async () => {
+    var data = await getNews();
+    console.log("findMe", data);
+    setQueriedNews(data.articles);
+  }
+
+  useEffect(() => {
+    renderNews();
+  }, []);
+
   const [isOpen, setIsOpen] = useState(false);
   const [css] = useStyletron();
   return (
@@ -170,7 +183,7 @@ export default function Home() {
                 flexDirection: "column",
               }}
             >
-              {news.map((topic) => (
+              {queriedNews.length > 0 ? (queriedNews.map((topic) => (
                 <FlexGridItem {...itemProps}>
                   <div onClick={() => window.open(topic.url)}>
                     <Card
@@ -182,13 +195,13 @@ export default function Home() {
                           }),
                         },
                       }}
-                      headerImage={topic.image}
+                      headerImage={topic.urlToImage}
                     >
-                      <h4>{topic.description}</h4>
+                      <h4>{topic.title}</h4>
                     </Card>
                   </div>
                 </FlexGridItem>
-              ))}
+              ))): (null)}
             </div>
           </FlexGrid>
         </FlexGridItem>
