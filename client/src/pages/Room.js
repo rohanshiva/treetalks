@@ -9,6 +9,8 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 
+import TweetModal from "../components/TweetModal";
+
 import { Input } from "baseui/input";
 import { Button, KIND } from "baseui/button";
 import { FlexGrid, FlexGridItem } from "baseui/flex-grid";
@@ -19,7 +21,6 @@ import micOff from "../images/mic-off.svg";
 import "./styles.css";
 import moment from "moment";
 import { SocketContext } from "../context/SocketContext";
-
 import TweetModal from "../components/TweetModal";
 
 const getRoomId = (path) => {
@@ -44,6 +45,8 @@ export default function Room(props) {
   const [showTweetModal, setShowTweetModal] = useState(false);
 
   const dummy = useRef();
+
+  const [showTweetModal, setShowTweetModal] = useState(false);
 
   useEffect(() => {
     let leaveRoom = () => {};

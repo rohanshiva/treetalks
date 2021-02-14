@@ -1,3 +1,4 @@
+
 import {Endpoint} from "../config/Api";
 
 export async function getNews() {

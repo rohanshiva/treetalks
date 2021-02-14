@@ -7,10 +7,14 @@ import "./styles.css";
 import { FlexGrid, FlexGridItem } from "baseui/flex-grid";
 import { Card, StyledBody, StyledAction } from "baseui/card";
 import news from "../data/news.json";
+import { getNews } from "../apis/News";
+import "./styles.css";
 import JoinModal from "../components/JoinModal";
 import CreateModal from "../components/CreateModal";
 import {getNews} from "../apis/News";
 import "./styles.css";
+
+import { toaster, ToasterContainer } from "baseui/toast";
 
 const itemProps = {
   height: "100%",
@@ -20,6 +24,16 @@ const itemProps = {
 };
 
 export default function Home() {
+  
+  //will connect toast warning after other stuff is integrated.
+  
+  const [toastKey, setToastKey] = React.useState(null);
+  const showToast = () => setToastKey(toaster.warning("Please Login to Use This Feautre!"));
+  const closeToast = () => {
+    toaster.clear(toastKey);
+    setToastKey(null);
+  };
+
   const topics = [
     {
       emoji: "🤰",
@@ -96,6 +110,17 @@ export default function Home() {
     },
   ];
 
+  const [queriedNews, setQueriedNews] = useState([]);
+  const renderNews = async () => {
+    var data = await getNews();
+    setQueriedNews(data.articles);
+  };
+
+  useEffect(() => {
+    renderNews();
+  }, []);
+
+  const [isOpen, setIsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showCreateModal, setCreateModal] = useState(false);
   const [selectTopic, setSelectTopic] = useState(0);
@@ -259,6 +284,8 @@ export default function Home() {
           </FlexGrid>
         </FlexGridItem>
       </FlexGrid>
+      <ToasterContainer autoHideDuration={4000}> 
+    </ToasterContainer>
     </div>
   );
 }
