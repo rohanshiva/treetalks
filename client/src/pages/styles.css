@@ -8,11 +8,10 @@
     width: 100%;
   }
 
-  @media (max-width: 1500px) {
+  @media (max-width: 1000px) {
     .homeCols {
       min-width: 100%;
     }
-    .navbarAll { 
-      min-width: 100%;
-    }
   }
+
+  

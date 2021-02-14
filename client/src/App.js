@@ -2,18 +2,20 @@ import "./App.css";
 import Navbar from "./components/Navbar";
 import LandingPage from "./pages/LandingPage";
 import Home from "./pages/Home";
-import Chat from "./pages/Chat"
+import Room from "./pages/Room";
 import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { SocketIOProvider } from "use-socketio";
 
 import { BaseProvider } from "baseui";
 import { Provider as StyletronProvider } from "styletron-react";
 import { Client as Styletron } from "styletron-engine-atomic";
-import { LightTheme} from "baseui";
+import { LightTheme } from "baseui";
 
 import firebase from "firebase/app";
 import "firebase/auth";
-
 import { useAuthState } from "react-firebase-hooks/auth";
+import history from "./History";
 
 var firebaseConfig = {
   apiKey: "AIzaSyAKGg3SA1dseQKEL-xRreH-b1PE5SBb9rA",
@@ -25,17 +27,33 @@ var firebaseConfig = {
   measurementId: "G-P81VNEX9CC",
 };
 
+
 firebase.initializeApp(firebaseConfig);
 
 const engine = new Styletron();
 function App() {
+
   const [user] = useAuthState(firebase.auth());
 
   return (
     <StyletronProvider value={engine}>
       <BaseProvider theme={LightTheme}>
         <Navbar />
-        {user ? (<Chat/>) : <Home />}
+        {user ? (
+          <Router history={history}>
+            <Switch>
+              <Route exact path="/" component={Home} />
+               <SocketIOProvider
+                url="http://localhost:5000"
+                opts={{ transports: ["websocket", "polling", "flashsocket"] }}
+              > 
+                <Route exact path="/:roomId" component={Room} />
+               </SocketIOProvider> 
+            </Switch>
+          </Router>
+        ) : (
+          <LandingPage />
+        )}
       </BaseProvider>
     </StyletronProvider>
   );

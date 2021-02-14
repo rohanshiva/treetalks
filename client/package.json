@@ -9,12 +9,15 @@
     "axios": "^0.21.1",
     "baseui": "^9.110.0",
     "firebase": "^8.2.7",
+    "history": "^5.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-firebase-hooks": "^2.2.0",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.2",
     "styletron-engine-atomic": "^1.4.6",
     "styletron-react": "^5.2.7",
+    "use-socketio": "^2.1.0",
     "web-vitals": "^1.0.1"
   },
   "scripts": {

@@ -2,19 +2,13 @@ import React, { useState } from "react";
 import { ListItem, ListItemLabel } from "baseui/list";
 import { useStyletron } from "baseui";
 import { Button, SHAPE, KIND } from "baseui/button";
-import {
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalButton,
-  SIZE,
-  ROLE,
-} from "baseui/modal";
+import "./styles.css";
+
 import { FlexGrid, FlexGridItem } from "baseui/flex-grid";
 import { Card, StyledBody, StyledAction } from "baseui/card";
 import news from "../data/news.json";
-import "./styles.css";
+import JoinModal from "../components/JoinModal";
+import CreateModal from "../components/CreateModal";
 
 const itemProps = {
   height: "100%",
@@ -25,33 +19,96 @@ const itemProps = {
 
 export default function Home() {
   const topics = [
-    { emoji: "🤰", title: "Abortion", description: "Babies" },
-    { emoji: "🌳", title: "Climate Change", description: "Babies" },
-    { emoji: "✊🏿", title: "Affirmative Action", description: "Babies" },
-    { emoji: "💵", title: "Universal Basic Income", description: "Babies" },
-    { emoji: "🌈", title: "Gay Marriage", description: "Babies" },
-    { emoji: "💣", title: "Millitary Spending", description: "Babies" },
-    { emoji: "🏥", title: "Universal Healthcare", description: "small" },
-    { emoji: "📑", title: "Taxes", description: "small" },
-    { emoji: "🦠", title: "Corona Virus Vaccine", description: "small" },
+    {
+      emoji: "🤰",
+      title: "Abortion",
+      description: "Babies",
+      question: "What's your view on abortion",
+    },
+    {
+      emoji: "🌳",
+      title: "Climate Change",
+      description: "Babies",
+      question: "What's your view on climate change",
+    },
+    {
+      emoji: "✊🏿",
+      title: "Affirmative Action",
+      description: "Babies",
+      question: "What's your view on affirmative action",
+    },
+    {
+      emoji: "💵",
+      title: "Universal Basic Income",
+      description: "Babies",
+      question: "What's your view on universal basic income",
+    },
+    {
+      emoji: "🌈",
+      title: "Gay Marriage",
+      description: "Babies",
+      question: "What's your view on gay marriage",
+    },
+    {
+      emoji: "💣",
+      title: "Millitary Spending",
+      description: "Babies",
+      question: "What's your view on Millitary Spending",
+    },
+    {
+      emoji: "🏥",
+      title: "Universal Healthcare",
+      description: "small",
+      question: "What's your view on Universal Healthcare",
+    },
+    {
+      emoji: "📑",
+      title: "Taxes",
+      description: "small",
+      question: "What's your view on Taxes",
+    },
+    {
+      emoji: "🦠",
+      title: "Corona Virus Vaccine",
+      description: "small",
+      question: "What's your view on Corona Virus Vaccine",
+    },
     { emoji: "🔫", title: "Gun Control", description: "small" },
-    { emoji: "🌎", title: "International Affairs", description: "small" },
-    { emoji: "🐘", title: "Poaching", description: "small" },
-    { emoji: "🔌", title: "Capital Punishment", description: "small" },
+    {
+      emoji: "🌎",
+      title: "International Affairs",
+      description: "small",
+      question: "What's your view on Gun Control",
+    },
+    {
+      emoji: "🐘",
+      title: "Poaching",
+      description: "small",
+      question: "What's your view on Poaching",
+    },
+    {
+      emoji: "🔌",
+      title: "Capital Punishment",
+      description: "small",
+      question: "What's your view on abortion",
+    },
   ];
-  const [isOpen, setIsOpen] = useState(false);
+
+  const [showModal, setShowModal] = useState(false);
+  const [showCreateModal, setCreateModal] = useState(false);
+  const [selectTopic, setSelectTopic] = useState(0);
   const [css] = useStyletron();
   return (
     <div>
       <FlexGrid flexGridColumnCount={3} flexGridColumnGap="scale100">
-        <FlexGridItem {...itemProps} className="homeCols">
-          <section style={{ width: "100%"}}>
+        <FlexGridItem  className="homeCols" {...itemProps}>
+          <section style={{ width: "100%" }}>
             <center>
               <Card
                 overrides={{
                   Root: { style: { width: "328px", margin: "4rem" } },
                 }}
-                title="Private Debate"
+                title="Custom Discussion"
               >
                 <StyledBody>
                   Create a private room to debate with your friends on any
@@ -59,6 +116,9 @@ export default function Home() {
                 </StyledBody>
                 <StyledAction>
                   <Button
+                    onClick={() => {
+                      setCreateModal(true);
+                    }}
                     shape={SHAPE.pill}
                     overrides={{ BaseButton: { style: { width: "100%" } } }}
                   >
@@ -67,11 +127,17 @@ export default function Home() {
                 </StyledAction>
               </Card>
             </center>
+            {showCreateModal && (
+              <CreateModal
+                isOpen={showCreateModal}
+                onClose={() => setCreateModal(false)}
+              />
+            )}
           </section>
         </FlexGridItem>
-        <FlexGridItem {...itemProps} className="homeCols">
+        <FlexGridItem className="homeCols" {...itemProps}>
           <section style={{ width: "100%" }}>
-            <h1 style={{ marginLeft: "37%" }}>🔥 Hot Topics</h1>
+            <h1 style={{ marginLeft: "40%" }}>🔥 Hot Topics</h1>
             <center>
               <ul
                 className={css({
@@ -85,7 +151,10 @@ export default function Home() {
                     <ListItem
                       endEnhancer={() => (
                         <Button
-                          onClick={() => setIsOpen(true)}
+                          onClick={() => {
+                            setShowModal(true);
+                            setSelectTopic(idx);
+                          }}
                           size="compact"
                           kind="minimal"
                         >
@@ -101,14 +170,17 @@ export default function Home() {
                       }}
                     >
                       <ListItemLabel>
-                        <h4 style={{whiteSpace: "pre"}}>{topic.emoji}   {topic.title}</h4>
+                      <h4 style={{whiteSpace: "pre"}}>{topic.emoji}   {topic.title}</h4>
                       </ListItemLabel>
                     </ListItem>
                   ) : (
                     <ListItem
                       endEnhancer={() => (
                         <Button
-                          onClick={() => setIsOpen(true)}
+                          onClick={() => {
+                            setShowModal(true);
+                            setSelectTopic(idx);
+                          }}
                           size="compact"
                           kind="minimal"
                         >
@@ -117,42 +189,23 @@ export default function Home() {
                       )}
                     >
                       <ListItemLabel>
-                        <h4 style={{whiteSpace: "pre"}}>{topic.emoji}   {topic.title}</h4>
+                      <h4 style={{whiteSpace: "pre"}}>{topic.emoji}   {topic.title}</h4>
                       </ListItemLabel>
                     </ListItem>
                   )
                 )}
               </ul>
             </center>
-
-            <Modal
-              onClose={() => setIsOpen(false)}
-              closeable
-              isOpen={isOpen}
-              animate
-              autoFocus
-              size={SIZE.default}
-              role={ROLE.dialog}
-            >
-              <ModalHeader>Hello world</ModalHeader>
-              <ModalBody>
-                Proin ut dui sed metus pharetra hend rerit vel non mi. Nulla
-                ornare faucibus ex, non facilisis nisl. Maecenas aliquet mauris
-                ut tempus.
-              </ModalBody>
-              <ModalFooter>
-                <ModalButton
-                  onClick={() => setIsOpen(false)}
-                  kind={KIND.minimal}
-                >
-                  Cancel
-                </ModalButton>
-                <ModalButton kind={KIND.minimal}>Join</ModalButton>
-              </ModalFooter>
-            </Modal>
+            {showModal && (
+              <JoinModal
+                topic={topics[selectTopic]}
+                isOpen={showModal}
+                onClose={() => setShowModal(false)}
+              />
+            )}
           </section>
         </FlexGridItem>
-        <FlexGridItem {...itemProps} className="homeCols">
+        <FlexGridItem  className="homeCols" {...itemProps}>
           <FlexGrid
             flexGridColumnCount={1}
             flexGridColumnGap="scale800"

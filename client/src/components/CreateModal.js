@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import {
   Modal,
   ModalHeader,
@@ -8,18 +8,37 @@ import {
   SIZE,
   ROLE,
 } from "baseui/modal";
-import { Button, SHAPE, KIND } from "baseui/button";
+import { KIND } from "baseui/button";
 import { FormControl } from "baseui/form-control";
 import { Input } from "baseui/input";
+import {createRoom} from '../apis/Room';
+import { useHistory } from "react-router-dom";
+
 
 export default function CreateModal({ isOpen, onClose }) {
-
+ const history = useHistory();
+ const [join, setJoin] = useState(false);
  const [topic, setTopic] = useState({topicName: "What's the topic", topicDetails: "Topic details"});
  const onTopicChange = ({ target: { value } }) => {
     setTopic({...topic, topicName: value});
   };
   const onDetailsChange = ({ target: { value } }) => {
     setTopic({...topic, topicDetails: value});
+  };
+
+  const handleJoin = async () => {
+    const room = await createRoom(); 
+    console.log(room);
+
+    history.push({
+      pathname: `/${room}`,
+      state: {
+        topic: topic
+      }
+    });
+    
+    console.log("Joining!");
+    
   };
   return (
     <Modal
@@ -54,7 +73,9 @@ export default function CreateModal({ isOpen, onClose }) {
         <ModalButton onClick={onClose} kind={KIND.minimal}>
           Cancel
         </ModalButton>
-        <ModalButton kind={KIND.minimal}>Join</ModalButton>
+
+        <ModalButton onClick={handleJoin} kind={KIND.minimal}>Join</ModalButton>
+
       </ModalFooter>
     </Modal>
   );
