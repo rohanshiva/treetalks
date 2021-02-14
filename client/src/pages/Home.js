@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ListItem, ListItemLabel } from "baseui/list";
 import { useStyletron } from "baseui";
 import { Button, SHAPE, KIND } from "baseui/button";
@@ -7,8 +7,13 @@ import "./styles.css";
 import { FlexGrid, FlexGridItem } from "baseui/flex-grid";
 import { Card, StyledBody, StyledAction } from "baseui/card";
 import news from "../data/news.json";
+<<<<<<< HEAD
 import JoinModal from "../components/JoinModal";
 import CreateModal from "../components/CreateModal";
+=======
+import {getNews} from "../apis/News";
+import "./styles.css";
+>>>>>>> e00742d1d73b85b37f49339ed413dfc4d8c645de
 
 const itemProps = {
   height: "100%",
@@ -94,9 +99,24 @@ export default function Home() {
     },
   ];
 
+<<<<<<< HEAD
   const [showModal, setShowModal] = useState(false);
   const [showCreateModal, setCreateModal] = useState(false);
   const [selectTopic, setSelectTopic] = useState(0);
+=======
+  const [queriedNews, setQueriedNews] = useState([]);
+  const renderNews = async () => {
+    var data = await getNews();
+    console.log("findMe", data);
+    setQueriedNews(data.articles);
+  }
+
+  useEffect(() => {
+    renderNews();
+  }, []);
+
+  const [isOpen, setIsOpen] = useState(false);
+>>>>>>> e00742d1d73b85b37f49339ed413dfc4d8c645de
   const [css] = useStyletron();
   return (
     <div>
@@ -223,7 +243,7 @@ export default function Home() {
                 flexDirection: "column",
               }}
             >
-              {news.map((topic) => (
+              {queriedNews.length > 0 ? (queriedNews.map((topic) => (
                 <FlexGridItem {...itemProps}>
                   <div onClick={() => window.open(topic.url)}>
                     <Card
@@ -235,13 +255,13 @@ export default function Home() {
                           }),
                         },
                       }}
-                      headerImage={topic.image}
+                      headerImage={topic.urlToImage}
                     >
-                      <h4>{topic.description}</h4>
+                      <h4>{topic.title}</h4>
                     </Card>
                   </div>
                 </FlexGridItem>
-              ))}
+              ))): (null)}
             </div>
           </FlexGrid>
         </FlexGridItem>

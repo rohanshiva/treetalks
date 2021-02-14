@@ -17,9 +17,8 @@ import LoginForm from "./LoginForm";
 import firebase from "firebase/app";
 import "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
-import {createUser} from "../apis/User";
-import {getUser} from "../apis/User";
-import "./styles.css";
+import { createUser } from "../apis/User";
+import { getUser } from "../apis/User";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -102,7 +101,7 @@ export default function Navbar() {
 
   return (
     <div>
-      <HeaderNavigation className="navbarAll">
+      <HeaderNavigation>
         <StyledNavigationList $align={ALIGN.left}>
           <StyledNavigationItem>
             <Button kind={KIND.minimal}>Tree Talks</Button>
