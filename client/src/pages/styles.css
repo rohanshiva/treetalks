@@ -14,4 +14,12 @@
     }
   }
 
+  .clickable{
+
+  }
+
+  .clickable:hover{
+    cursor: pointer;
+  }
+
   

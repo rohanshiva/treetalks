@@ -7,13 +7,10 @@ import "./styles.css";
 import { FlexGrid, FlexGridItem } from "baseui/flex-grid";
 import { Card, StyledBody, StyledAction } from "baseui/card";
 import news from "../data/news.json";
-<<<<<<< HEAD
 import JoinModal from "../components/JoinModal";
 import CreateModal from "../components/CreateModal";
-=======
 import {getNews} from "../apis/News";
 import "./styles.css";
->>>>>>> e00742d1d73b85b37f49339ed413dfc4d8c645de
 
 const itemProps = {
   height: "100%",
@@ -99,11 +96,9 @@ export default function Home() {
     },
   ];
 
-<<<<<<< HEAD
   const [showModal, setShowModal] = useState(false);
   const [showCreateModal, setCreateModal] = useState(false);
   const [selectTopic, setSelectTopic] = useState(0);
-=======
   const [queriedNews, setQueriedNews] = useState([]);
   const renderNews = async () => {
     var data = await getNews();
@@ -115,8 +110,6 @@ export default function Home() {
     renderNews();
   }, []);
 
-  const [isOpen, setIsOpen] = useState(false);
->>>>>>> e00742d1d73b85b37f49339ed413dfc4d8c645de
   const [css] = useStyletron();
   return (
     <div>

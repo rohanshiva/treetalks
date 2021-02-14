@@ -16,9 +16,19 @@ const getRoomId = (rooms: Set<string>) => {
     return Array.from(rooms)[1];
 }
 
+const getRandomName = () => {
+    const randomFirst = "Baby,Booble,Bunker,Cuddle,Cutie,Doodle,Foofie,Gooble,Honey,Kissie,Lover,Lovey,Moofie,Mooglie,Moopie,Moopsie,Nookum,Poochie,Pookie,Schmoopie,Schnoogle,Schnookie,Schnookum,Smooch,Smoochie,Smoosh,Snoogle,Snoogy,Snookie,Snookum,Snuggy,Sweetie,Woogle,Woogy,Wookie,Wookum,Wuddle,Wuggy,Wunny,Bumble,Bump,Dip".split(",");
+    const randomLast = "Boo,Bunch,Bunny,Cake,Cakes,Cute,Darling,Dumpling,Dumplings,Face,Foof,Goo,Head,Kin,Kins,Lips,Love,Mush,Pie,Pook,Pums,Bumble,Bump,Dip".split(",");
+  
+    const first = Math.floor(Math.random() * randomFirst.length);
+    const last = Math.floor(Math.random() * randomLast.length);
+    return randomFirst[first] + " " + randomLast[last];
+  }
+  
+
 const isInRoom = (socket: Socket) => socket.rooms.size > 1;
 
-const onDisconnecting = (socket: Socket, io: Server) => {
+const onLeave = (socket: Socket, io: Server) => {
     return () => {
         if (isInRoom(socket)) {
             const roomId = getRoomId(socket.rooms);
@@ -30,16 +40,21 @@ const onDisconnecting = (socket: Socket, io: Server) => {
                 let ownerDegree = room.getOwnerDegree();
                 let topicTitle = room.getTopicTitle();
                 room.onSpeakerLeave(socket.id);
-                
+                socket.leave(roomId);
                 //remove room from finder structure
-                //roomFinder.removeRoom(topicTitle, ownerDegree, roomId);
+                if(!room.getIsCustom()){
+                    roomFinder.removeRoom(topicTitle, ownerDegree, roomId);
+                }
+
                 if (room.isEmpty()) {
                     roomPool.delete(roomId);
                     redisClient.del(roomId);
                 }
                 else {
                     redisClient.set(roomId, room.serialize(), onRedisSet as Callback<string>);
-                    //roomFinder.addRoom(topicTitle, room.getOwnerDegree(), roomId);
+                    if(!room.getIsCustom()){
+                        roomFinder.addRoom(topicTitle, room.getOwnerDegree(), roomId);
+                    }
                     io.to(roomId).emit("room", room.serialize());
                 }
             });
@@ -51,11 +66,12 @@ type JoinRoom = {
     roomId: string,
     userId: string,
     degree: number
-    topicDetails: TopicDetails
+    topicDetails: TopicDetails,
+    isCustom: boolean
 }
 
 const onJoin = (socket: Socket, io: Server) => {
-    return ({ roomId, userId, degree, topicDetails }: JoinRoom) => {
+    return ({ roomId, userId, degree, topicDetails, isCustom }: JoinRoom) => {
         if (roomPool.has(roomId)) { 
             
             //make the user join the room if room if room is already created
@@ -71,7 +87,7 @@ const onJoin = (socket: Socket, io: Server) => {
                             socketId: socket.id,
                             id: userId,
                             degree: degree,
-                            anonUsername: userId
+                            anonUsername: getRandomName()
                         });
                         
                         redisClient.set(roomId, room.serialize(), onRedisSet as Callback<string>);
@@ -88,18 +104,20 @@ const onJoin = (socket: Socket, io: Server) => {
                 });
             }
             else {
-                let room = Room.new(roomId);
+                let room = Room.new(roomId, isCustom);
                 room.setOwner({
                     socketId: socket.id,
                     id: userId,
                     degree: degree,
-                    anonUsername: userId
+                    anonUsername: getRandomName()
                 });
 
                 room.setTopicDetails(topicDetails);
 
                 roomPool.set(roomId, true);
-                //roomFinder.addRoom(room.getTopicTitle(), room.getOwnerDegree(), roomId);
+                if(!room.getIsCustom()){
+                    roomFinder.addRoom(room.getTopicTitle(), room.getOwnerDegree(), roomId);
+                }
                 redisClient.set(roomId, room.serialize(), onRedisSet as Callback<string>);
 
                 socket.join(roomId);
@@ -115,21 +133,24 @@ type CreateMessage = {
 }
 
 const onMessage = (socket: Socket, io: Server) => {
-    return ({ authorId, text }: CreateMessage) => {
+    return ({ authorId, text}: CreateMessage) => {
         if (isInRoom(socket)) {
             const roomId = getRoomId(socket.rooms);
             const createdAt = moment.utc().format();
-            const message = {
-                authorId: authorId,
-                text: text,
-                id: randomBytes(8).toString("hex"),
-                createdAt: createdAt
-            };
+            
             redisClient.get(roomId, (err, result) => {
                 if (err != null || result == null) {
                     return;
                 }
+
                 let room = Room.from(JSON.parse(result));
+                const message = {
+                    authorId: authorId,
+                    anonUsername: room.getAnonUsername(authorId),
+                    text: text,
+                    id: randomBytes(8).toString("hex"),
+                    createdAt: createdAt
+                };
                 room.sendMessage(message);
                 redisClient.set(roomId, room.serialize(), onRedisSet as Callback<string>);
                 io.to(roomId).emit("room", room.serialize());
@@ -138,8 +159,26 @@ const onMessage = (socket: Socket, io: Server) => {
     }
 }
 
+const onMute = (socket: Socket, io: Server) => {
+    return ({id}:{id:string}) => {
+        if(isInRoom(socket)){
+            const roomId = getRoomId(socket.rooms);
+            redisClient.get(roomId, (err, result) => {
+                if (err != null || result == null) {
+                    return;
+                }
 
-export { onDisconnecting, onJoin, onMessage };
+                let room = Room.from(JSON.parse(result));
+                room.toggleMute(id);
+                redisClient.set(roomId, room.serialize(), onRedisSet as Callback<string>);
+                io.to(roomId).emit("room", room.serialize());
+            })
+        }
+    }
+}
+
+
+export {onJoin, onLeave, onMessage, onMute};
 
 
 

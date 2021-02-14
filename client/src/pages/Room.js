@@ -1,99 +1,165 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useContext, useState } from 'react'
+import { useLocation } from 'react-router-dom';
+import { useSocket } from 'use-socketio';
+import { validateRoom } from "../apis/Room";
+import { useStyletron } from "baseui";
+
+import firebase from "firebase/app";
+
+import "firebase/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
+
 
 import { Input } from "baseui/input";
 import { Button, KIND } from "baseui/button";
-import { useStyletron } from "baseui";
-import { Notification } from "baseui/notification";
-
 import { FlexGrid, FlexGridItem } from "baseui/flex-grid";
 import { Card, StyledBody, StyledAction } from "baseui/card";
 import { ListItem, ListItemLabel } from "baseui/list";
 import mic from "../images/mic.svg";
 import micOff from "../images/mic-off.svg";
-import { validateRoom } from "../apis/Room";
-import firebase from "firebase/app";
-import "firebase/auth";
-import { useAuthState } from "react-firebase-hooks/auth";
-import io from "socket.io-client";
 import "./styles.css";
 import moment from "moment";
+import {SocketContext} from "../context/SocketContext";
 
-
-const socket = io.connect("http://localhost:5000");
-
-socket.on("connect", () => {
-  console.log("Connected!");
-})
 
 const getRoomId = (path) => {
   return path.substring(1, path.length);
 }
 
+
 export default function Room(props) {
+  const { socket, isSocketConnected} = useContext(SocketContext);
+  const location = useLocation();
+
+  const [topicDetails, setTopicDetails] = useState(location.state ? location.state.params : {});
+
   const [user] = useAuthState(firebase.auth());
-  const roomID = getRoomId(props.location.pathname);
-  const [valid, setValid] = useState(true);
+  
   const [messages, setMessages] = useState([])
-  const [css, theme] = useStyletron();
   const [text, setText] = useState("");
-  const [player1Mute, setPlayer1Mute] = useState(true);
-  const [player2Mute, setPlayer2Mute] = useState(true);
+  const [css, theme] = useStyletron();
+  const [speakers, setSpeakers] = useState([]);
+
+
+  function createPeer(userId, socketId, stream) {
+    const peer = new Peer({
+      initiator: true,
+      trickle: false,
+      stream,
+    });
+
+    peer.on("signal", (signal) => {
+      socket.emit("voice", { userId, socketId, signal});
+    });
+
+    return peer;
+  }
+
 
   useEffect(() => {
-    
-    const leaveRoom = () => {
-      socket.disconnect();
+
+    let leaveRoom = () => {};
+    if(isSocketConnected){
+      leaveRoom = () => {
+        console.log("Leaving...");
+        socket.emit("leave", () => { });
+      }
+
+      window.onunload=leaveRoom;
+      window.onpopstate=leaveRoom;
+
+      let isCustom = false;
+      let degree = 50;
+      if(location.state){
+        isCustom = location.state.isCustom;
+        degree = location.state.degree;
+      }
+
+
+      const options = {
+        roomId: getRoomId(props.location.pathname),
+        userId: user.uid,
+        topicDetails: topicDetails,
+        degree: degree,
+        isCustom: isCustom
+      };
+  
+      socket.emit("join", options);
+  
+      socket.on("room", (data) => {
+        const room = JSON.parse(data);
+        setTopicDetails(room.topicDetails);
+        setMessages(room.chatHistory);
+        setSpeakers(room.speakers);
+      });
     }
-
-    const roomOptions = {
-      roomId: roomID,
-      userId: "Ramko9999",
-      topicDetails: {
-        title: "World Eater",
-        description: "They are nice",
-      },
-      degree: 1,
-    };
-    
-    socket.emit("join", roomOptions);
-
-    socket.on("room", (data) => {
-      const room = JSON.parse(data);
-      setMessages(room.chatHistory);
-    });
-    
     return () => {
       leaveRoom();
     };
-    
-  }, []);
+
+  }, [isSocketConnected]);
+
+  useEffect(() => {
+    if(speakers.length > 0){
+      navigator.getUserMedia({ audio: true }).then((stream) => {
+        const peers = speakers.map((speaker) => {
+          const peer = createPeer(speaker.id, speaker.socketId, stream);
+          peersRef.current.push({
+            peerID: userID,
+            peer,
+          });
+          return peer;
+        });
+
+      });
+    }
+
+  }, [speakers])
+
+  const toggleMute = (id) => {
+    socket.emit("mute", {id: id});
+  }
+
+  const getPlayerTile = ({ id, anonUsername, isMuted }) => {
+
+    let fakeName = anonUsername;
+    if(id === user.uid){
+        fakeName += ` (You)`;
+    }
+
+    return (
+      <div key={id}>
+        <ListItem>
+        <ListItemLabel>{fakeName}</ListItemLabel>
+        <ListItemLabel>
+          <div className="clickable">
+            <img
+              src={isMuted ? micOff : mic}
+              onClick={() => {
+                if(id === user.uid){
+                  toggleMute(id);
+                }
+              }}
+            ></img>
+          </div>
+        </ListItemLabel>
+        </ListItem>
+      </div>
+    );
+
+  }
 
   const onMessageSubmit = e => {
     e.preventDefault();
-    if(text.length > 0){
+    if (text.length > 0) {
       socket.emit("chatMessage", {
-        authorId: "Ramko9999",
+        authorId: user.uid,
         text: text
       });
       setText("");
     }
   }
 
-  const toggleMute = (player) => {
-    if (player == "player1") {
-      if (player1Mute) {
-        setPlayer1Mute(false);
-      } else {
-        setPlayer1Mute(true);
-      }
-    } else {
-      if (player2Mute) {
-        setPlayer2Mute(false);
-      } else {
-        setPlayer2Mute(true);
-      }
-    }
-  };
 
   const itemProps = {
     height: "100%",
@@ -106,13 +172,9 @@ export default function Room(props) {
     setText(e.target.value);
   };
 
-
-
   return (
     <div>
-      {valid ? null : (
-        <Notification kind="negative">Negative notification</Notification>
-      )}
+
       <FlexGrid
         flexGridColumnCount={2}
         flexGridColumnGap="scale800"
@@ -123,37 +185,23 @@ export default function Room(props) {
             overrides={{
               Root: { style: { width: "400px", margin: "5rem" } },
             }}
-            title={`Let's talk about ${props.topicName}!`}
+            title={`Let's talk about ${topicDetails ? topicDetails.title : "_______"}!`}
           >
             <StyledBody>
               Create a private room to debate with your friends on any topic.
-            </StyledBody>
+          </StyledBody>
 
             <StyledBody>
-              <ListItem>
-                <ListItemLabel>Player One (You)</ListItemLabel>
-                <ListItemLabel>
-                  <img
-                    src={player1Mute ? micOff : mic}
-                    onClick={() => toggleMute("player1")}
-                  ></img>
-                </ListItemLabel>
-              </ListItem>
-              <ListItem>
-                <ListItemLabel>Player Two</ListItemLabel>
-                <ListItemLabel>
-                  <img
-                    src={player2Mute ? micOff : mic}
-                    onClick={() => toggleMute("player2")}
-                  ></img>
-                </ListItemLabel>
-              </ListItem>
+              {speakers.map(getPlayerTile)}
             </StyledBody>
 
             <StyledAction>
-              <Button overrides={{ BaseButton: { style: { width: "100%" } } }}>
+              <Button overrides={{ BaseButton: { style: { width: "100%" } } }} onClick={() => {
+                socket.emit("leave", () => { });
+                window.history.back();
+              }}>
                 End Chat
-              </Button>
+            </Button>
             </StyledAction>
           </Card>
         </FlexGridItem>
@@ -169,8 +217,8 @@ export default function Room(props) {
                 flexDirection: "column",
               }}
             >
-              {messages.map(({authorId, text, createdAt, id}, idx) => (
-                <ChatMessage key={id} message={text} username={authorId} createdAt={createdAt} />
+              {messages.map(({ authorId, text, anonUsername, createdAt, id }, idx) => (
+                <ChatMessage key={id} text={text} username={anonUsername} createdAt={createdAt} />
               ))}
             </div>
             <form
@@ -195,24 +243,23 @@ export default function Room(props) {
           </div>
         </FlexGridItem>
       </FlexGrid>
-    </div>
-  );
+    </div>);
 }
 
 function convertTime(hours, minutes) {
   var isAm = true;
   var h = hours;
   if (hours >= 12) {
-      isAm = false;
-      h -= 12;
+    isAm = false;
+    h -= 12;
   }
   if (h === 0) {
-      h += 12;
+    h += 12;
   }
   var ending = isAm ? "AM" : "PM";
   var min = `0${minutes}`
   if (minutes >= 10) {
-      min = `${minutes}`;
+    min = `${minutes}`;
   }
   return `${h}:${min} ${ending}`;
 }
@@ -223,39 +270,38 @@ function convertToLocal(time) {
    * @param time: UTC Moment.js Time string;
    */
 
-  var months = ["January","Feburary","March","April","May","June","July","August",
-      "September", "October", "November", "December"];
+  var months = ["January", "Feburary", "March", "April", "May", "June", "July", "August",
+    "September", "October", "November", "December"];
   var otherTime = moment(time).local();
   var now = moment().local();
   if (otherTime.dayOfYear() === now.dayOfYear()) {
-      return `Today ${convertTime(otherTime.hours(), otherTime.minutes())}`;
+    return `Today ${convertTime(otherTime.hours(), otherTime.minutes())}`;
   }
   var diff = now.date() - otherTime.date();
   if (diff < 2) {
-      return `Yesterday ${convertTime(otherTime.hours(), otherTime.minutes())}`;
+    return `Yesterday ${convertTime(otherTime.hours(), otherTime.minutes())}`;
   } else {
-      return `${months[otherTime.month()]} ${otherTime.date()}, ${otherTime.year()} ${convertTime(otherTime.hours(), otherTime.minutes())}`
+    return `${months[otherTime.month()]} ${otherTime.date()}, ${otherTime.year()} ${convertTime(otherTime.hours(), otherTime.minutes())}`
   }
 
 }
 
 function ChatMessage(props) {
-  const { text, username, createdAt } = props.message;
+  const { text, username, createdAt } = props;
+
   return (
     <>
-      <div className={`message`}>
-        <h4>{username}</h4>
-        <p>{text}</p>
+      <div className={`message`} style={{border: ".25px solid grey"}}>
+        <span style={{float:"left", margin:"0% 0% 0% 2%"}}>
+            <h3> {username} </h3>
+            <p style={{}}> {text} </p>
+        </span>
+        <span style={{float:"right", margin:"0% 2% 0% 0%"}}>
+            <p> {convertToLocal(createdAt)} </p>
+        </span>
       </div>
+      <div style={{borderBottom: "1px black"}}></div>
     </>
   );
 }
 
-
-const Divider = () => {
-  return (
-    <div className="container">
-      <div className="border" />
-    </div>
-  );
-};

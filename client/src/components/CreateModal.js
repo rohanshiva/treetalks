@@ -15,10 +15,9 @@ import {createRoom} from '../apis/Room';
 import { useHistory } from "react-router-dom";
 
 
-export default function CreateModal({ isOpen, onClose }) {
- const history = useHistory();
- const [join, setJoin] = useState(false);
- const [topic, setTopic] = useState({topicName: "What's the topic", topicDetails: "Topic details"});
+export default function CreateModal({ isOpen, onClose, topicName, topicDetails }) {
+const history = useHistory();
+ const [topic, setTopic] = useState({topicName: "Issue Topic", topicDetails: "Issue Description"});
  const onTopicChange = ({ target: { value } }) => {
     setTopic({...topic, topicName: value});
   };
@@ -28,7 +27,11 @@ export default function CreateModal({ isOpen, onClose }) {
 
   const handleJoin = async () => {
     const room = await createRoom(); 
-    history.push(`/${room}`, { topic: topic})
+    const topicDetails = {
+      title: topic.topicName,
+      details: topic.topicDetails
+    };
+    history.push(`/${room}`, { params: topicDetails, isCustom: true})
   };
   return (
     <Modal
