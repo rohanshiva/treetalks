@@ -128,7 +128,6 @@ export default function Room(props) {
     }
   };
 
-
   const itemProps = {
     height: "100%",
     display: "flex",
@@ -179,7 +178,7 @@ export default function Room(props) {
           </Card>
         </FlexGridItem>
         <FlexGridItem>
-          <div>
+          <div style={{ marginRight: "20%", marginTop: "10%" }}>
             <div
               style={{
                 margin: "4rem 2rem",
@@ -197,11 +196,11 @@ export default function Room(props) {
                     text={text}
                     username={anonUsername}
                     createdAt={createdAt}
+                    idx={idx}
                   />
                 )
               )}
-              <div ref={dummy}>
-              </div>
+              <div ref={dummy}></div>
             </div>
             <form
               onSubmit={onMessageSubmit}
@@ -214,7 +213,7 @@ export default function Room(props) {
                 overrides={{
                   Root: {
                     style: {
-                      width: "70%",
+                      width: "100%",
                       marginRight: theme.sizing.scale400,
                     },
                   },
@@ -296,20 +295,37 @@ function convertToLocal(time) {
 }
 
 function ChatMessage(props) {
-  const { text, username, createdAt } = props;
+  const { text, username, createdAt, idx } = props;
 
-  return (
-    <>
-      <div className={`message`} style={{ border: ".25px solid grey" }}>
-        <span style={{ float: "left", margin: "0% 0% 0% 2%" }}>
-          <h3> {username} </h3>
-          <p style={{}}> {text} </p>
-        </span>
-        <span style={{ float: "right", margin: "0% 2% 0% 0%" }}>
-          <p> {convertToLocal(createdAt)} </p>
-        </span>
-      </div>
-      <div style={{ borderBottom: "1px black" }}></div>
-    </>
-  );
+  if (idx % 2 === 0) {
+    return (
+      <>
+        <div className={`message`} style={{ background: "mono500" }}>
+          <span style={{ float: "left", margin: "0% 0% 0% 2%" }}>
+            <h3> {username} </h3>
+            <p style={{}}> {text} </p>
+          </span>
+          <span style={{ float: "right", margin: "0% 2% 0% 0%" }}>
+            <p> {convertToLocal(createdAt)} </p>
+          </span>
+        </div>
+        <div style={{ borderBottom: "1px black" }}></div>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <div className={`message`} style={{ border: ".25px solid grey" }}>
+          <span style={{ float: "left", margin: "0% 0% 0% 2%" }}>
+            <h3> {username} </h3>
+            <p style={{}}> {text} </p>
+          </span>
+          <span style={{ float: "right", margin: "0% 2% 0% 0%" }}>
+            <p> {convertToLocal(createdAt)} </p>
+          </span>
+        </div>
+        <div style={{ borderBottom: "1px black" }}></div>
+      </>
+    );
+  }
 }
