@@ -30,6 +30,10 @@ fetch("http://localhost:5000/room", {
         authorId: "Ramko9999"
     });
 
+    socket.on('room', (data)=> {
+        console.log(data);
+    })
+
 }));
 
 

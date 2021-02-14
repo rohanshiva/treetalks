@@ -32,14 +32,14 @@ const onDisconnecting = (socket: Socket, io: Server) => {
                 room.onSpeakerLeave(socket.id);
                 
                 //remove room from finder structure
-                roomFinder.removeRoom(topicTitle, ownerDegree, roomId);
+                //roomFinder.removeRoom(topicTitle, ownerDegree, roomId);
                 if (room.isEmpty()) {
                     roomPool.delete(roomId);
                     redisClient.del(roomId);
                 }
                 else {
                     redisClient.set(roomId, room.serialize(), onRedisSet as Callback<string>);
-                    roomFinder.addRoom(topicTitle, room.getOwnerDegree(), roomId);
+                    //roomFinder.addRoom(topicTitle, room.getOwnerDegree(), roomId);
                     io.to(roomId).emit("room", room.serialize());
                 }
             });
@@ -56,7 +56,6 @@ type JoinRoom = {
 
 const onJoin = (socket: Socket, io: Server) => {
     return ({ roomId, userId, degree, topicDetails }: JoinRoom) => {
-
         if (roomPool.has(roomId)) { 
             
             //make the user join the room if room if room is already created
@@ -77,7 +76,7 @@ const onJoin = (socket: Socket, io: Server) => {
                         
                         redisClient.set(roomId, room.serialize(), onRedisSet as Callback<string>);
                         
-                        roomFinder.removeRoom(room.getTopicTitle(), room.getOwnerDegree(), roomId);
+                        //roomFinder.removeRoom(room.getTopicTitle(), room.getOwnerDegree(), roomId);
                         socket.join(roomId);
                         io.to(roomId).emit("room", room.serialize());
                     }
@@ -100,7 +99,7 @@ const onJoin = (socket: Socket, io: Server) => {
                 room.setTopicDetails(topicDetails);
 
                 roomPool.set(roomId, true);
-                roomFinder.addRoom(room.getTopicTitle(), room.getOwnerDegree(), roomId);
+                //roomFinder.addRoom(room.getTopicTitle(), room.getOwnerDegree(), roomId);
                 redisClient.set(roomId, room.serialize(), onRedisSet as Callback<string>);
 
                 socket.join(roomId);

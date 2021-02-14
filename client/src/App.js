@@ -17,6 +17,7 @@ import "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import history from "./History";
 
+
 var firebaseConfig = {
   apiKey: "AIzaSyAKGg3SA1dseQKEL-xRreH-b1PE5SBb9rA",
   authDomain: "treetalks-eec9f.firebaseapp.com",
@@ -27,12 +28,10 @@ var firebaseConfig = {
   measurementId: "G-P81VNEX9CC",
 };
 
-
 firebase.initializeApp(firebaseConfig);
 
 const engine = new Styletron();
 function App() {
-
   const [user] = useAuthState(firebase.auth());
 
   return (
@@ -40,15 +39,12 @@ function App() {
       <BaseProvider theme={LightTheme}>
         <Navbar />
         {user ? (
-          <Router history={history}>
+          <Router>
             <Switch>
               <Route exact path="/" component={Home} />
-               <SocketIOProvider
-                url="http://localhost:5000"
-                opts={{ transports: ["websocket", "polling", "flashsocket"] }}
-              > 
+
                 <Route exact path="/:roomId" component={Room} />
-               </SocketIOProvider> 
+
             </Switch>
           </Router>
         ) : (

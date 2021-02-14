@@ -8,6 +8,9 @@ import {
   SIZE,
   ROLE,
 } from "baseui/modal";
+import firebase from "firebase/app";
+import "firebase/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { Button, SHAPE, KIND } from "baseui/button";
 
 import { Slider } from "baseui/slider";

@@ -28,17 +28,7 @@ export default function CreateModal({ isOpen, onClose }) {
 
   const handleJoin = async () => {
     const room = await createRoom(); 
-    console.log(room);
-
-    history.push({
-      pathname: `/${room}`,
-      state: {
-        topic: topic
-      }
-    });
-    
-    console.log("Joining!");
-    
+    history.push(`/${room}`, { topic: topic})
   };
   return (
     <Modal

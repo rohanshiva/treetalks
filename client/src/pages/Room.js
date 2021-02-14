@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSocket } from "use-socketio";
+
 import { Input } from "baseui/input";
 import { Button, KIND } from "baseui/button";
 import { useStyletron } from "baseui";
@@ -11,61 +11,73 @@ import { ListItem, ListItemLabel } from "baseui/list";
 import mic from "../images/mic.svg";
 import micOff from "../images/mic-off.svg";
 import { validateRoom } from "../apis/Room";
-import history from "../History";
+import firebase from "firebase/app";
+import "firebase/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
+import io from "socket.io-client";
 import "./styles.css";
+import moment from "moment";
 
 
+const socket = io.connect("http://localhost:5000");
 
-const handleJoin = (socket, room, id, {title, description}, degree) => {
-  socket.emit("join",{
-    roomId: room,
-    id: id,
-    topicDetails: {
-      title: title,
-      description: description
-    }
-  });
+socket.on("connect", () => {
+  console.log("Connected!");
+})
+
+const getRoomId = (path) => {
+  return path.substring(1, path.length);
 }
 
 export default function Room(props) {
-  const roomID = props.location.pathname;
-  const { socket } = useSocket("connect");
+  const [user] = useAuthState(firebase.auth());
+  const roomID = getRoomId(props.location.pathname);
   const [valid, setValid] = useState(true);
-
-  useEffect(() => {
-    const leaveRoom = () => {
-      socket.disconnect();
-    };
-
-    window.addEventListener("beforeunload", () => leaveRoom());
-
-    validateRoom(roomID).then((isValid) => {
-      if (isValid) {
-  
-        socket.emit("join", {
-          roomId: roomID,
-          userId: "Ramko9999",
-          topicDetails: {
-            title: props.topic,
-            description: props.topic,
-          },
-          degree: 1,
-        });
-      } else {
-        setValid(false);
-      }
-    });
-
-    return () => {
-      window.removeEventListener("beforeunload", () => leaveRoom());
-    };
-  }, [roomID, socket]);
-
+  const [messages, setMessages] = useState([])
   const [css, theme] = useStyletron();
-  const inputRef = React.useRef(null);
-
+  const [text, setText] = useState("");
   const [player1Mute, setPlayer1Mute] = useState(true);
   const [player2Mute, setPlayer2Mute] = useState(true);
+
+  useEffect(() => {
+    
+    const leaveRoom = () => {
+      socket.disconnect();
+    }
+
+    const roomOptions = {
+      roomId: roomID,
+      userId: "Ramko9999",
+      topicDetails: {
+        title: "World Eater",
+        description: "They are nice",
+      },
+      degree: 1,
+    };
+    
+    socket.emit("join", roomOptions);
+
+    socket.on("room", (data) => {
+      const room = JSON.parse(data);
+      setMessages(room.chatHistory);
+    });
+    
+    return () => {
+      leaveRoom();
+    };
+    
+  }, []);
+
+  const onMessageSubmit = e => {
+    e.preventDefault();
+    if(text.length > 0){
+      socket.emit("chatMessage", {
+        authorId: "Ramko9999",
+        text: text
+      });
+      setText("");
+    }
+  }
 
   const toggleMute = (player) => {
     if (player == "player1") {
@@ -83,33 +95,6 @@ export default function Room(props) {
     }
   };
 
-  const messages = [
-    {
-      id: "sponge",
-      text: "Cut the coupe",
-      username: "sponge",
-      createdAt: "12920383",
-    },
-    {
-      id: "sponge",
-      text: "Cut the coupe",
-      username: "sponge",
-      createdAt: "12920383",
-    },
-    {
-      id: "sponge",
-      text: "Cut the coupe",
-      username: "sponge",
-      createdAt: "12920383",
-    },
-    {
-      id: "sponge",
-      text: "Cut the coupe",
-      username: "Bombshell",
-      createdAt: "12920383",
-    },
-  ];
-
   const itemProps = {
     height: "100%",
     display: "flex",
@@ -117,11 +102,17 @@ export default function Room(props) {
     justifyContent: "center",
   };
 
+  const onTextChange = (e) => {
+    setText(e.target.value);
+  };
+
+
+
   return (
     <div>
-      {valid ? (
-       null
-      ) :  <Notification kind="negative">Negative notification</Notification>}
+      {valid ? null : (
+        <Notification kind="negative">Negative notification</Notification>
+      )}
       <FlexGrid
         flexGridColumnCount={2}
         flexGridColumnGap="scale800"
@@ -132,7 +123,7 @@ export default function Room(props) {
             overrides={{
               Root: { style: { width: "400px", margin: "5rem" } },
             }}
-            title= {`Let's talk about ${props.topicName}!`}
+            title={`Let's talk about ${props.topicName}!`}
           >
             <StyledBody>
               Create a private room to debate with your friends on any topic.
@@ -178,14 +169,18 @@ export default function Room(props) {
                 flexDirection: "column",
               }}
             >
-              {messages.map((msg) => (
-                <ChatMessage key={msg.id} message={msg} />
+              {messages.map(({authorId, text, createdAt, id}, idx) => (
+                <ChatMessage key={id} message={text} username={authorId} createdAt={createdAt} />
               ))}
             </div>
-            <form className={css({ display: "flex", margin: "4rem 2rem" })}>
+            <form
+              onSubmit={onMessageSubmit}
+              className={css({ display: "flex", margin: "4rem 2rem" })}
+            >
               <Input
-                inputRef={inputRef}
-                placeholder="With input ref"
+                name="message"
+                onChange={(e) => onTextChange(e)}
+                value={text}
                 overrides={{
                   Root: {
                     style: {
@@ -195,11 +190,7 @@ export default function Room(props) {
                   },
                 }}
               />
-              <Button
-                onClick={() => inputRef.current && inputRef.current.focus()}
-              >
-                Send
-              </Button>
+              <Button>Send</Button>
             </form>
           </div>
         </FlexGridItem>
@@ -208,9 +199,48 @@ export default function Room(props) {
   );
 }
 
+function convertTime(hours, minutes) {
+  var isAm = true;
+  var h = hours;
+  if (hours >= 12) {
+      isAm = false;
+      h -= 12;
+  }
+  if (h === 0) {
+      h += 12;
+  }
+  var ending = isAm ? "AM" : "PM";
+  var min = `0${minutes}`
+  if (minutes >= 10) {
+      min = `${minutes}`;
+  }
+  return `${h}:${min} ${ending}`;
+}
+
+
+function convertToLocal(time) {
+  /**
+   * @param time: UTC Moment.js Time string;
+   */
+
+  var months = ["January","Feburary","March","April","May","June","July","August",
+      "September", "October", "November", "December"];
+  var otherTime = moment(time).local();
+  var now = moment().local();
+  if (otherTime.dayOfYear() === now.dayOfYear()) {
+      return `Today ${convertTime(otherTime.hours(), otherTime.minutes())}`;
+  }
+  var diff = now.date() - otherTime.date();
+  if (diff < 2) {
+      return `Yesterday ${convertTime(otherTime.hours(), otherTime.minutes())}`;
+  } else {
+      return `${months[otherTime.month()]} ${otherTime.date()}, ${otherTime.year()} ${convertTime(otherTime.hours(), otherTime.minutes())}`
+  }
+
+}
+
 function ChatMessage(props) {
   const { text, username, createdAt } = props.message;
-
   return (
     <>
       <div className={`message`}>
@@ -220,6 +250,7 @@ function ChatMessage(props) {
     </>
   );
 }
+
 
 const Divider = () => {
   return (
