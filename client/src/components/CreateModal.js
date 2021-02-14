@@ -29,6 +29,7 @@ const history = useHistory();
 
   const handleJoin = async () => {
     const room = await createRoom(); 
+    console.log(room);
     history.push(`/${room}`, { params: topic})
   };
   return (

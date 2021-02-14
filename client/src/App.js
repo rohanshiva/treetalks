@@ -39,11 +39,17 @@ function App() {
       <BaseProvider theme={LightTheme}>
         <Navbar />
         {user ? (
-         
+      
             <Switch>
               <Route exact path="/" component={Home} />
-              <Route exact path="/:roomId" component={Room} />
+              <SocketIOProvider
+                url="http://localhost:5000"
+                opts={{ transports: ["websocket", "polling", "flashsocket"] }}
+              >
+                <Route exact path="/:roomId" component={Room} />
+              </SocketIOProvider>
             </Switch>
+
         ) : (
           <LandingPage />
         )}
