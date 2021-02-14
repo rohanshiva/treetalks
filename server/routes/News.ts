@@ -1,6 +1,6 @@
 import {newsApi} from "../config/Config";
-import express = require("express");
 const fetch = require('node-fetch');
+import express = require("express");
 
 const newsRouter = express.Router();
 

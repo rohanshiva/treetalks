@@ -194,6 +194,7 @@ export default function Room(props) {
                   <ChatMessage
                     key={id}
                     text={text}
+                    idx={idx}
                     username={anonUsername}
                     createdAt={createdAt}
                     idx={idx}
