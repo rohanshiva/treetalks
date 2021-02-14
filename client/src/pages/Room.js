@@ -40,22 +40,6 @@ export default function Room(props) {
   const [css, theme] = useStyletron();
   const [speakers, setSpeakers] = useState([]);
 
-
-  function createPeer(userId, socketId, stream) {
-    const peer = new Peer({
-      initiator: true,
-      trickle: false,
-      stream,
-    });
-
-    peer.on("signal", (signal) => {
-      socket.emit("voice", { userId, socketId, signal});
-    });
-
-    return peer;
-  }
-
-
   useEffect(() => {
 
     let leaveRoom = () => {};
@@ -99,22 +83,6 @@ export default function Room(props) {
 
   }, [isSocketConnected]);
 
-  useEffect(() => {
-    if(speakers.length > 0){
-      navigator.getUserMedia({ audio: true }).then((stream) => {
-        const peers = speakers.map((speaker) => {
-          const peer = createPeer(speaker.id, speaker.socketId, stream);
-          peersRef.current.push({
-            peerID: userID,
-            peer,
-          });
-          return peer;
-        });
-
-      });
-    }
-
-  }, [speakers])
 
   const toggleMute = (id) => {
     socket.emit("mute", {id: id});

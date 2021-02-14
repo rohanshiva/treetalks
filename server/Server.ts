@@ -12,7 +12,6 @@ const socketServer = require("socket.io")(httpServer, {
 );
 
 socketServer.on("connection", (socket:Socket) => {
-    console.log("Recieved a connection!");
     socket.on("leave", onLeave(socket, socketServer));
     socket.on("join", onJoin(socket, socketServer));
     socket.on("chatMessage", onMessage(socket, socketServer));
