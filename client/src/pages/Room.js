@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSocket } from "use-socketio";
+
 import { Input } from "baseui/input";
 import { Button, KIND } from "baseui/button";
 import { useStyletron } from "baseui";
@@ -12,49 +12,57 @@ import Upload from "baseui/icon/upload";
 import mic from "../images/mic.svg";
 import micOff from "../images/mic-off.svg";
 import { validateRoom } from "../apis/Room";
-
+import firebase from "firebase/app";
+import "firebase/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
+import io from "socket.io-client";
 import { Avatar } from "baseui/avatar";
 import "./styles.css";
 
+const socket = io.connect("http://localhost:5000");
+
+
+const getRoomId = (path) => {
+  return path.substring(1, path.length);
+}
+
 export default function Room(props) {
-  const roomID = props.location.pathname;
-  const { socket } = useSocket("connect");
+  const [user] = useAuthState(firebase.auth());
+  const roomID = getRoomId(props.location.pathname);
   const [valid, setValid] = useState(true);
-
-  useEffect(() => {
-    const leaveRoom = () => {
-      socket.disconect();
-    };
-
-    window.addEventListener("beforeunload", () => leaveRoom());
-
-    validateRoom(roomID).then((isValid) => {
-      if (isValid) {
-  
-        socket.emit("join", {
-          roomId: roomID,
-          userId: "Ramko9999",
-          topicDetails: {
-            title: props.topic,
-            description: props.topic,
-          },
-          degree: 1,
-        });
-      } else {
-        setValid(false);
-      }
-    });
-
-    return () => {
-      window.removeEventListener("beforeunload", () => leaveRoom());
-    };
-  }, [roomID, socket]);
-
+  const [data, setData] = useState({});
   const [css, theme] = useStyletron();
-  const inputRef = React.useRef(null);
-
+  const [state, setStaet] = useState({ message: "", name: "" });
   const [player1Mute, setPlayer1Mute] = useState(true);
   const [player2Mute, setPlayer2Mute] = useState(true);
+
+  useEffect(() => {
+
+    const roomOptions = {
+      roomId: roomID,
+      userId: "Ramko9999",
+      topicDetails: {
+        title: "World Eater",
+        description: "They are nice",
+      },
+      degree: 1,
+    };
+    
+    socket.emit("join", roomOptions);
+
+    socket.on("room", (data) => {
+      console.log(data)
+    });
+
+
+  }, []);
+
+  const onMessageSubmit = e => {
+    e.preventDefault()
+    const { name, message } = state
+    socket.emit('message', { name, message })
+    setStaet({ message: '', name })
+  }
 
   const toggleMute = (player) => {
     if (player == "player1") {
@@ -106,11 +114,17 @@ export default function Room(props) {
     justifyContent: "center",
   };
 
+  const onTextChange = (e) => {
+    setStaet({ ...state, [e.target.name]: e.target.value });
+  };
+
+
+
   return (
     <div>
-      {valid ? (
-       null
-      ) :  <Notification kind="negative">Negative notification</Notification>}
+      {valid ? null : (
+        <Notification kind="negative">Negative notification</Notification>
+      )}
       <FlexGrid
         flexGridColumnCount={2}
         flexGridColumnGap="scale800"
@@ -121,7 +135,7 @@ export default function Room(props) {
             overrides={{
               Root: { style: { width: "400px", margin: "5rem" } },
             }}
-            title= {`Let's talk about ${props.topicName}!`}
+            title={`Let's talk about ${props.topicName}!`}
           >
             <StyledBody>
               Create a private room to debate with your friends on any topic.
@@ -167,14 +181,18 @@ export default function Room(props) {
                 flexDirection: "column",
               }}
             >
-              {messages.map((msg) => (
-                <ChatMessage key={msg.id} message={msg} />
+              {messages.map((msg, idx) => (
+                <ChatMessage key={idx} message={msg} />
               ))}
             </div>
-            <form className={css({ display: "flex", margin: "4rem 2rem" })}>
+            <form
+              onSubmit={onMessageSubmit}
+              className={css({ display: "flex", margin: "4rem 2rem" })}
+            >
               <Input
-                inputRef={inputRef}
-                placeholder="With input ref"
+                name="message"
+                onChange={(e) => onTextChange(e)}
+                value={state.message}
                 overrides={{
                   Root: {
                     style: {
@@ -184,11 +202,7 @@ export default function Room(props) {
                   },
                 }}
               />
-              <Button
-                onClick={() => inputRef.current && inputRef.current.focus()}
-              >
-                Send
-              </Button>
+              <Button>Send</Button>
             </form>
           </div>
         </FlexGridItem>
@@ -199,7 +213,6 @@ export default function Room(props) {
 
 function ChatMessage(props) {
   const { text, username, createdAt } = props.message;
-
   return (
     <>
       <div className={`message`}>

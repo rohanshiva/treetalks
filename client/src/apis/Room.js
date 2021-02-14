@@ -17,7 +17,7 @@ export async function createRoom(){
 
 export async function validateRoom(roomId) {
 
-    const url = new URL(Endpoint + `/room/validate${roomId}`);
+    const url = new URL(Endpoint + `/room/validate/${roomId}`);
     const response = await fetch(url);
     if (response.status !== 200) {
         const {message} = await response.json();

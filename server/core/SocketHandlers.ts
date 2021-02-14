@@ -50,7 +50,6 @@ type JoinRoom = {
 
 const onJoin = (socket: Socket, io: Server) => {
     return ({ roomId, userId, degree, topicDetails }: JoinRoom) => {
-
         if (roomPool.has(roomId)) { //make the user join the room
             const isGameCreated = roomPool.get(roomId);
             if (isGameCreated) {
@@ -67,6 +66,7 @@ const onJoin = (socket: Socket, io: Server) => {
                     });
                     redisClient.set(roomId, room.serialize(), onRedisSet as Callback<string>);
                     socket.join(roomId);
+                    console.log("Connected!");
                     io.to(roomId).emit("room", room.serialize());
                 });
             }
